@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';// Add your speech-to-text import
 
-class CanvasPage extends StatefulWidget {  // Change to StatefulWidget
-  const CanvasPage({super.key});
+class Susunkata extends StatefulWidget {  // Change to StatefulWidget
+  const Susunkata({super.key});
 
   @override
-  State<CanvasPage> createState() => _CanvasState();
+  State<Susunkata> createState() => _SusunState();
 }
 
-class _CanvasState extends State<CanvasPage> {
+class _SusunState extends State<Susunkata> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +18,7 @@ class _CanvasState extends State<CanvasPage> {
           children: <Widget>[
             ElevatedButton(
               onPressed: () {},
-              child: Text('Placeholder dlu'),
+              child: Text('Placeholder dlu susun'),
             ),
             SizedBox(height: 20),
           ],

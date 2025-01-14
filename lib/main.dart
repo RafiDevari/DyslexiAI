@@ -1,5 +1,8 @@
+import 'package:dyslexiai/susunkata.dart';
 import 'package:flutter/material.dart';
 import 'package:dyslexiai/speechrecog.dart';
+import 'package:dyslexiai/canvas.dart';
+
 
 void main() {
   runApp(MyApp());
@@ -41,44 +44,24 @@ class HomePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => PageTwo()),
+                  MaterialPageRoute(builder: (context) => const CanvasPage()),
                 );
               },
-              child: Text('Go to Page Two'),
+              child: Text('Canvas'),
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => PageThree()),
+                  MaterialPageRoute(builder: (context) => const Susunkata()),
                 );
               },
-              child: Text('Go to Page Three'),
+              child: Text('SusunKata'),
             ),
           ],
         ),
       ),
-    );
-  }
-}
-
-class PageTwo extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Ini ')),
-      body: Center(child: Text('This is Page Two')),
-    );
-  }
-}
-
-class PageThree extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Page Three')),
-      body: Center(child: Text('This is Page Three')),
     );
   }
 }
