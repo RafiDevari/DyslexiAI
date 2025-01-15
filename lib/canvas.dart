@@ -8,7 +8,7 @@ class CanvasPage extends StatefulWidget {
 }
 
 class _CanvasState extends State<CanvasPage> {
-  final int numberOfSections = 5; // Change this to control the number of blocks
+  final int numberOfSections = 4; // Change this to control the number of blocks
   List<List<Offset?>> allPoints = []; // Store points for each border
 
   @override
@@ -21,24 +21,22 @@ class _CanvasState extends State<CanvasPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Canvas Page')),
+      appBar: AppBar(title: const Text('Canvas Page')),
 
       body: LayoutBuilder(
         builder: (context, constraints) {
-          final totalGaps = numberOfSections - 1; // Number of gaps
-          final gapSize = 10.0; // Define the size of each gap
-          final totalGapWidth = totalGaps * gapSize; // Total width occupied by gaps
-          final availableWidth = constraints.maxWidth - totalGapWidth;
-          final sectionWidth = availableWidth / numberOfSections; // Width of each section
+          const double gapSize = 10.0; // Define the size of each gap
+          final double totalGapsWidth = (numberOfSections - 1) * gapSize;
+          final double sectionSize = (constraints.maxWidth - totalGapsWidth) / numberOfSections;
 
           return Stack(
             children: [
               for (int i = 0; i < numberOfSections; i++) // Create sections
                 Positioned(
-                  left: i * (sectionWidth + gapSize), // Adjust position with gaps
-                  top: 400,
-                  width: sectionWidth,
-                  height: constraints.maxHeight - 800, // Adjust height dynamically
+                  left: i * (sectionSize + gapSize), // Adjust position with gaps
+                  top: 100, // Start 100 pixels from the top
+                  width: sectionSize,
+                  height: sectionSize, // Make the sections square
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(
@@ -51,9 +49,9 @@ class _CanvasState extends State<CanvasPage> {
                         final position = details.localPosition;
                         // Check if the position is within the current section
                         if (position.dx >= 0 &&
-                            position.dx <= sectionWidth &&
+                            position.dx <= sectionSize &&
                             position.dy >= 0 &&
-                            position.dy <= constraints.maxHeight - 800) {
+                            position.dy <= sectionSize) {
                           setState(() {
                             allPoints[i].add(position);
                           });
@@ -86,7 +84,7 @@ class _CanvasState extends State<CanvasPage> {
             }
           });
         },
-        child: Icon(Icons.clear),
+        child: const Icon(Icons.clear),
       ),
     );
   }
