@@ -19,6 +19,13 @@ class _CanvasState extends State<CanvasPage> {
         builder: (context, constraints) {
           return Stack(
             children: [
+
+
+              Positioned(child: Text('Gambar di sini'), top: 0, left: 0),
+              Positioned(child: Text('Gambar di sini'), top: 15, left: 0),
+              Positioned(child: Text('Gambar di sini'), top: 30, left: 0),
+
+
               Positioned(
                 top: 400, // Match the y constraint starting point
                 left: 0,
