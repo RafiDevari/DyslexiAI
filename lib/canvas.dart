@@ -20,10 +20,10 @@ class _CanvasState extends State<CanvasPage> {
           return Stack(
             children: [
               Positioned(
-                top: 600, // Match the y constraint starting point
+                top: 400, // Match the y constraint starting point
                 left: 0,
                 right: 0,
-                bottom: 0, // Match the max height constraint
+                bottom: 100, // Match the max height constraint
                 child: Container(
                   decoration: BoxDecoration(
                     border: Border.all(
@@ -38,7 +38,7 @@ class _CanvasState extends State<CanvasPage> {
                       if (position.dx >= 0 &&
                           position.dx <= constraints.maxWidth &&
                           position.dy >= 0 &&
-                          position.dy <= constraints.maxHeight) {
+                          position.dy <= 400) {
                         setState(() {
                           points.add(position);
                         });
