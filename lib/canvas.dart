@@ -14,31 +14,60 @@ class _CanvasState extends State<CanvasPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Canvas Page')),
-      body: GestureDetector(
-        onPanUpdate: (details) {
-          // Menambahkan titik baru saat pengguna menggambar
-          setState(() {
-            points.add(details.localPosition);
-          });
+
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return Stack(
+            children: [
+              Positioned(
+                top: 600, // Match the y constraint starting point
+                left: 0,
+                right: 0,
+                bottom: 0, // Match the max height constraint
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.black, // Warna border
+                      width: 2.0,          // Ketebalan border
+                    ),
+                  ),
+                  child: GestureDetector(
+                    onPanUpdate: (details) {
+                      final position = details.localPosition;
+                      // Adjust the localPosition to account for the offset
+                      if (position.dx >= 0 &&
+                          position.dx <= constraints.maxWidth &&
+                          position.dy >= 0 &&
+                          position.dy <= constraints.maxHeight) {
+                        setState(() {
+                          points.add(position);
+                        });
+                      }
+                    },
+                    onPanEnd: (details) {
+                      // Menambahkan null untuk memisahkan garis
+                      setState(() {
+                        points.add(null);
+                      });
+                    },
+                    child: CustomPaint(
+                      painter: CanvasPainter(points),
+                      size: Size.infinite, // Memenuhi seluruh area layar
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
         },
-        onPanEnd: (details) {
-          // Menambahkan null untuk memisahkan garis
-          setState(() {
-            points.add(null);
-          });
-        },
-        child: CustomPaint(
-          painter: CanvasPainter(points),
-          size: Size.infinite, // Memenuhi seluruh area layar
-        ),
       ),
+
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Menghapus semua gambar
           setState(() {
             points.clear();
           });
-
         },
         child: Icon(Icons.clear),
       ),
