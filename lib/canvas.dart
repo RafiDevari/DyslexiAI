@@ -8,7 +8,15 @@ class CanvasPage extends StatefulWidget {
 }
 
 class _CanvasState extends State<CanvasPage> {
-  List<Offset?> points = []; // Gunakan Offset? untuk mengizinkan nilai null
+  final int numberOfSections = 5; // Change this to control the number of blocks
+  List<List<Offset?>> allPoints = []; // Store points for each border
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the points list based on the number of sections
+    allPoints = List.generate(numberOfSections, (_) => []);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,53 +25,53 @@ class _CanvasState extends State<CanvasPage> {
 
       body: LayoutBuilder(
         builder: (context, constraints) {
+          final totalGaps = numberOfSections - 1; // Number of gaps
+          final gapSize = 10.0; // Define the size of each gap
+          final totalGapWidth = totalGaps * gapSize; // Total width occupied by gaps
+          final availableWidth = constraints.maxWidth - totalGapWidth;
+          final sectionWidth = availableWidth / numberOfSections; // Width of each section
+
           return Stack(
             children: [
-
-
-              Positioned(child: Text('Gambar di sini'), top: 0, left: 0),
-              Positioned(child: Text('Gambar di sini'), top: 15, left: 0),
-              Positioned(child: Text('Gambar di sini'), top: 30, left: 0),
-
-
-              Positioned(
-                top: 400, // Match the y constraint starting point
-                left: 0,
-                right: 0,
-                bottom: 100, // Match the max height constraint
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.black, // Warna border
-                      width: 2.0,          // Ketebalan border
+              for (int i = 0; i < numberOfSections; i++) // Create sections
+                Positioned(
+                  left: i * (sectionWidth + gapSize), // Adjust position with gaps
+                  top: 400,
+                  width: sectionWidth,
+                  height: constraints.maxHeight - 800, // Adjust height dynamically
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.black, // Border color
+                        width: 2.0, // Border thickness
+                      ),
                     ),
-                  ),
-                  child: GestureDetector(
-                    onPanUpdate: (details) {
-                      final position = details.localPosition;
-                      // Adjust the localPosition to account for the offset
-                      if (position.dx >= 0 &&
-                          position.dx <= constraints.maxWidth &&
-                          position.dy >= 0 &&
-                          position.dy <= 400) {
+                    child: GestureDetector(
+                      onPanUpdate: (details) {
+                        final position = details.localPosition;
+                        // Check if the position is within the current section
+                        if (position.dx >= 0 &&
+                            position.dx <= sectionWidth &&
+                            position.dy >= 0 &&
+                            position.dy <= constraints.maxHeight - 800) {
+                          setState(() {
+                            allPoints[i].add(position);
+                          });
+                        }
+                      },
+                      onPanEnd: (details) {
+                        // Add null to separate lines
                         setState(() {
-                          points.add(position);
+                          allPoints[i].add(null);
                         });
-                      }
-                    },
-                    onPanEnd: (details) {
-                      // Menambahkan null untuk memisahkan garis
-                      setState(() {
-                        points.add(null);
-                      });
-                    },
-                    child: CustomPaint(
-                      painter: CanvasPainter(points),
-                      size: Size.infinite, // Memenuhi seluruh area layar
+                      },
+                      child: CustomPaint(
+                        painter: CanvasPainter(allPoints[i]),
+                        size: Size.infinite,
+                      ),
                     ),
                   ),
                 ),
-              ),
             ],
           );
         },
@@ -71,9 +79,11 @@ class _CanvasState extends State<CanvasPage> {
 
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Menghapus semua gambar
+          // Clear all drawings
           setState(() {
-            points.clear();
+            for (var points in allPoints) {
+              points.clear();
+            }
           });
         },
         child: Icon(Icons.clear),
