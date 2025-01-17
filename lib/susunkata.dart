@@ -8,9 +8,9 @@ class Susunkata extends StatefulWidget {
 }
 
 class _SusunState extends State<Susunkata> {
-  String correctWord = 'FLUTE'; // Single correct word
+  String correctWord = 'CRY'; // Single correct word
   late List<String?> blocks;
-  final List<String> letters = ['F', 'L', 'U', 'T', 'T', 'E', 'R', 'A', 'B', 'C']; // Pool of letters
+  final List<String> letters = ['C', 'R', 'Y', 'A', 'B', 'C']; // Pool of letters
   final Map<String, bool> usedLetters = {}; // Track used letter instances
 
   @override
@@ -23,7 +23,7 @@ class _SusunState extends State<Susunkata> {
   void initializeUsedLetters() {
     // Initialize usedLetters with unique keys for each letter
     for (int i = 0; i < letters.length; i++) {
-      usedLetters['$i-${letters[i]}'] = false; // e.g., "0-F", "1-L"
+      usedLetters['$i-${letters[i]}'] = false; // e.g., "0-C", "1-R"
     }
   }
 
@@ -35,8 +35,9 @@ class _SusunState extends State<Susunkata> {
         backgroundColor: Colors.green,
       ));
     } else {
+      // Display the incorrect word and show the correct one
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Wrong Word! ❌'),
+        content: Text('Wrong Word! Your answer: "$word"'),
         backgroundColor: Colors.red,
       ));
     }
@@ -51,18 +52,15 @@ class _SusunState extends State<Susunkata> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('heheheha'),
+        title: Text('Susun kata'),
       ),
       body: Column(
         children: [
-          SizedBox(height: 100),
-
-
+          SizedBox(height: 20),
           Text(
-            'TOLONK PWISSSS', // Placeholder text
+            'Tonlonkkkkkk', // Placeholder text
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
           ),
-
           SizedBox(height: 10), // Space between text and blocks
           Expanded(
             flex: 2, // Use 2/3 of available space for the blocks
@@ -115,6 +113,12 @@ class _SusunState extends State<Susunkata> {
               },
             ),
           ),
+          SizedBox(height: 10), // Space between the blocks and button
+          ElevatedButton(
+            onPressed: checkWord,
+            child: Text('Check Word'),
+          ),
+          SizedBox(height: 10), // Space between the button and letters
           Flexible(
             flex: 1, // Use 1/3 of available space for the letter pool
             child: Padding(
@@ -172,11 +176,6 @@ class _SusunState extends State<Susunkata> {
                 }).toList(),
               ),
             ),
-          ),
-          SizedBox(height: 100), // Space between the button and letters
-          ElevatedButton(
-            onPressed: checkWord,
-            child: Text('Check Word'),
           ),
           SizedBox(height: 20),
         ],
