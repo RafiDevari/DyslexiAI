@@ -8,61 +8,61 @@ class Susunkata extends StatefulWidget {
 }
 
 class _SusunState extends State<Susunkata> {
-  int blockCount = 6; // Number of blocks
-  final List<String?> blocks = [];
-  final List<String> letters = ['A', 'B', 'C', 'D', 'E', 'A', 'B', 'C', 'D', 'E', 'A', 'B', 'C', 'D', 'E', 'A', 'B', 'C', 'D', 'E']; // Letters
+  String correctWord = 'FLUTE'; // Single correct word
+  late List<String?> blocks;
+  final List<String> letters = ['F', 'L', 'U', 'T', 'T', 'E', 'R', 'A', 'B', 'C']; // Pool of letters
   final Map<String, bool> usedLetters = {}; // Track used letter instances
 
   @override
   void initState() {
     super.initState();
-    blocks.addAll(List.generate(blockCount, (index) => null)); // Initialize blocks
+    blocks = List.generate(correctWord.length, (index) => null); // Initialize blocks
+    initializeUsedLetters();
+  }
 
+  void initializeUsedLetters() {
     // Initialize usedLetters with unique keys for each letter
     for (int i = 0; i < letters.length; i++) {
-      usedLetters['$i-${letters[i]}'] = false; // e.g., "0-A", "1-B"
+      usedLetters['$i-${letters[i]}'] = false; // e.g., "0-F", "1-L"
     }
   }
 
-  void updateBlockCount(int newCount) {
-    setState(() {
-      blockCount = newCount;
-      blocks.clear();
-      blocks.addAll(List.generate(blockCount, (index) => null));
-      usedLetters.forEach((key, value) {
-        usedLetters[key] = false; // Reset all letters
-      });
-    });
+  void checkWord() {
+    String word = blocks.map((block) => block?.split('-')[1] ?? '').join(); // Form the word
+    if (word == correctWord) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Correct Word! 🎉'),
+        backgroundColor: Colors.green,
+      ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Wrong Word! ❌'),
+        backgroundColor: Colors.red,
+      ));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final double gridSpacing = 8.0;
-    final int crossAxisCount = blockCount < 6 ? blockCount : 6; // Max columns = 6
+    final int crossAxisCount = correctWord.length; // Number of blocks = word length
     final double blockSize =
         (MediaQuery.of(context).size.width - (crossAxisCount + 1) * gridSpacing) / crossAxisCount;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Drag and Drop Harusnya ya'),
-        actions: [
-          PopupMenuButton<int>(
-            onSelected: updateBlockCount,
-            itemBuilder: (context) => [
-              PopupMenuItem(value: 4, child: Text('4 Blocks')),
-              PopupMenuItem(value: 5, child: Text('5 Blocks')),
-              PopupMenuItem(value: 6, child: Text('6 Blocks')),
-            ],
-          ),
-        ],
+        title: Text('heheheha'),
       ),
       body: Column(
         children: [
-          SizedBox(height: 20),
+          SizedBox(height: 100),
+
+
           Text(
-            'TOLONK COOOOOKKK AJG FLUTTER', // Placeholder text
+            'TOLONK PWISSSS', // Placeholder text
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
           ),
+
           SizedBox(height: 10), // Space between text and blocks
           Expanded(
             flex: 2, // Use 2/3 of available space for the blocks
@@ -115,7 +115,6 @@ class _SusunState extends State<Susunkata> {
               },
             ),
           ),
-          SizedBox(height: 10), // Space between the blocks and letter pool
           Flexible(
             flex: 1, // Use 1/3 of available space for the letter pool
             child: Padding(
@@ -173,6 +172,11 @@ class _SusunState extends State<Susunkata> {
                 }).toList(),
               ),
             ),
+          ),
+          SizedBox(height: 100), // Space between the button and letters
+          ElevatedButton(
+            onPressed: checkWord,
+            child: Text('Check Word'),
           ),
           SizedBox(height: 20),
         ],
