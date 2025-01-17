@@ -8,9 +8,9 @@ class Susunkata extends StatefulWidget {
 }
 
 class _SusunState extends State<Susunkata> {
-  int blockCount = 5; // Number of blocks
+  int blockCount = 6; // Number of blocks
   final List<String?> blocks = [];
-  final List<String> letters = ['A', 'B', 'C', 'D', 'E', 'A', 'B', 'C', 'D', 'E']; // Letters
+  final List<String> letters = ['A', 'B', 'C', 'D', 'E', 'A', 'B', 'C', 'D', 'E', 'A', 'B', 'C', 'D', 'E', 'A', 'B', 'C', 'D', 'E']; // Letters
   final Map<String, bool> usedLetters = {}; // Track used letter instances
 
   @override
@@ -44,7 +44,7 @@ class _SusunState extends State<Susunkata> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Drag and Drop Letters'),
+        title: Text('Drag and Drop Harusnya ya'),
         actions: [
           PopupMenuButton<int>(
             onSelected: updateBlockCount,
@@ -59,15 +59,13 @@ class _SusunState extends State<Susunkata> {
       body: Column(
         children: [
           SizedBox(height: 20),
-
           Text(
-            'COOOOOKK TOLONKKKK',
+            'TOLONK COOOOOKKK AJG FLUTTER', // Placeholder text
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
           ),
-
-
-          SizedBox(height: 20), // Space between text and blocks
+          SizedBox(height: 10), // Space between text and blocks
           Expanded(
+            flex: 2, // Use 2/3 of available space for the blocks
             child: GridView.builder(
               padding: EdgeInsets.all(gridSpacing),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -117,56 +115,64 @@ class _SusunState extends State<Susunkata> {
               },
             ),
           ),
-          Wrap(
-            spacing: 10,
-            children: usedLetters.entries.map((entry) {
-              String key = entry.key;
-              bool isUsed = entry.value;
-              String letter = key.split('-')[1]; // Extract letter from key
+          SizedBox(height: 10), // Space between the blocks and letter pool
+          Flexible(
+            flex: 1, // Use 1/3 of available space for the letter pool
+            child: Padding(
+              padding: const EdgeInsets.all(10.0), // Add padding around the letter pool
+              child: Wrap(
+                spacing: 10, // Horizontal spacing between letters
+                runSpacing: 10, // Vertical spacing between rows of letters
+                children: usedLetters.entries.map((entry) {
+                  String key = entry.key;
+                  bool isUsed = entry.value;
+                  String letter = key.split('-')[1]; // Extract letter from key
 
-              return Draggable<String>(
-                data: key,
-                feedback: Material(
-                  color: Colors.transparent,
-                  child: Container(
-                    padding: EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(4.0),
+                  return Draggable<String>(
+                    data: key,
+                    feedback: Material(
+                      color: Colors.transparent,
+                      child: Container(
+                        padding: EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(4.0),
+                        ),
+                        child: Text(
+                          letter,
+                          style: TextStyle(fontSize: 24, color: Colors.white),
+                        ),
+                      ),
                     ),
-                    child: Text(
-                      letter,
-                      style: TextStyle(fontSize: 24, color: Colors.white),
+                    childWhenDragging: Container(
+                      padding: EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: Colors.grey,
+                        borderRadius: BorderRadius.circular(4.0),
+                      ),
+                      child: Text(
+                        letter,
+                        style: TextStyle(fontSize: 24, color: Colors.white),
+                      ),
                     ),
-                  ),
-                ),
-                childWhenDragging: Container(
-                  padding: EdgeInsets.all(8.0),
-                  decoration: BoxDecoration(
-                    color: Colors.grey,
-                    borderRadius: BorderRadius.circular(4.0),
-                  ),
-                  child: Text(
-                    letter,
-                    style: TextStyle(fontSize: 24, color: Colors.white),
-                  ),
-                ),
-                child: Opacity(
-                  opacity: isUsed ? 0.5 : 1.0,
-                  child: Container(
-                    padding: EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      color: isUsed ? Colors.grey : Colors.blue,
-                      borderRadius: BorderRadius.circular(4.0),
+                    child: Opacity(
+                      opacity: isUsed ? 0.5 : 1.0,
+                      child: Container(
+                        padding: EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          color: isUsed ? Colors.grey : Colors.blue,
+                          borderRadius: BorderRadius.circular(4.0),
+                        ),
+                        child: Text(
+                          letter,
+                          style: TextStyle(fontSize: 24, color: Colors.white),
+                        ),
+                      ),
                     ),
-                    child: Text(
-                      letter,
-                      style: TextStyle(fontSize: 24, color: Colors.white),
-                    ),
-                  ),
-                ),
-              );
-            }).toList(),
+                  );
+                }).toList(),
+              ),
+            ),
           ),
           SizedBox(height: 20),
         ],
