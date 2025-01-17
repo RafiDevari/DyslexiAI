@@ -8,7 +8,7 @@ class CanvasPage extends StatefulWidget {
 }
 
 class _CanvasState extends State<CanvasPage> {
-  final int numberOfSections = 4; // Change this to control the number of blocks
+  final int numberOfSections = 5; // Change this to control the number of blocks
   List<List<Offset?>> allPoints = []; // Store points for each border
 
   @override
