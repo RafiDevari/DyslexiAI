@@ -14,11 +14,13 @@ class _SusunState extends State<Susunkata> {
   final List<String> letters = ['C', 'R', 'Y', 'A', 'B', 'C']; // Pool of letters
   final Map<String, bool> usedLetters = {}; // Track used letter instances
   final FlutterTts flutterTts = FlutterTts(); // TTS instance
+  List<bool> correctPositions = []; // Track correct positions
 
   @override
   void initState() {
     super.initState();
     blocks = List.generate(correctWord.length, (index) => null); // Initialize blocks
+    correctPositions = List.generate(correctWord.length, (index) => false); // Initialize correct positions
     initializeUsedLetters();
   }
 
@@ -31,6 +33,18 @@ class _SusunState extends State<Susunkata> {
 
   void checkWord() {
     String word = blocks.map((block) => block?.split('-')[1] ?? '').join(); // Form the word
+    List<bool> newCorrectPositions = List.generate(correctWord.length, (index) => false);
+
+    for (int i = 0; i < correctWord.length; i++) {
+      if (blocks[i]?.split('-')[1] == correctWord[i]) {
+        newCorrectPositions[i] = true;
+      }
+    }
+
+    setState(() {
+      correctPositions = newCorrectPositions;
+    });
+
     if (word == correctWord) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Correct Word! 🎉'),
@@ -58,9 +72,6 @@ class _SusunState extends State<Susunkata> {
     final double blockSize =
         (MediaQuery.of(context).size.width - (crossAxisCount + 1) * gridSpacing) / crossAxisCount;
 
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double imageSize = screenWidth * 0.35; // Set image size to 15% of screen width
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Drag and Drop Letters'),
@@ -73,20 +84,14 @@ class _SusunState extends State<Susunkata> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
           ),
           SizedBox(height: 10),
-
-
           GestureDetector(
             onTap: speakCorrectWord, // Play TTS on image tap
             child: Image.asset(
               'assets/speaker_icon.png', // Add your image in assets folder
-              width: imageSize, // Responsive width
-              height: imageSize, // Responsive height
+              width: 50,
+              height: 50,
             ),
           ),
-
-
-
-
           SizedBox(height: 10), // Space between text and blocks
           Expanded(
             flex: 2, // Use 2/3 of available space for the blocks
@@ -100,41 +105,54 @@ class _SusunState extends State<Susunkata> {
               itemCount: blocks.length,
               itemBuilder: (context, index) {
                 String? value = blocks[index];
+                bool isCorrect = correctPositions[index]; // Check if the position is correct
 
-                return DragTarget<String>(
-                  onWillAccept: (letter) => value == null && usedLetters[letter] == false,
-                  onAccept: (letter) {
-                    setState(() {
-                      blocks[index] = letter;
-                      usedLetters[letter] = true; // Mark letter as used
-                    });
-                  },
-                  builder: (context, candidateData, rejectedData) {
-                    return GestureDetector(
-                      onTap: () {
-                        if (value != null) {
-                          setState(() {
-                            usedLetters[value] = false; // Unmark letter as used
-                            blocks[index] = null; // Clear block
-                          });
-                        }
+                return Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    DragTarget<String>(
+                      onWillAccept: (letter) => value == null && usedLetters[letter] == false,
+                      onAccept: (letter) {
+                        setState(() {
+                          blocks[index] = letter;
+                          usedLetters[letter] = true; // Mark letter as used
+                        });
                       },
-                      child: Container(
-                        width: blockSize,
-                        height: blockSize,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          borderRadius: BorderRadius.circular(8.0),
-                          color: value != null ? Colors.blue[100] : Colors.grey[200],
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          value != null ? value.split('-')[1] : '', // Display only the letter
-                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                        ),
+                      builder: (context, candidateData, rejectedData) {
+                        return GestureDetector(
+                          onTap: () {
+                            if (value != null) {
+                              setState(() {
+                                usedLetters[value] = false; // Unmark letter as used
+                                blocks[index] = null; // Clear block
+                              });
+                            }
+                          },
+                          child: Container(
+                            width: blockSize,
+                            height: blockSize,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black),
+                              borderRadius: BorderRadius.circular(8.0),
+                              color: isCorrect
+                                  ? Colors.green[100]
+                                  : (value != null ? Colors.blue[100] : Colors.grey[200]),
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              value != null ? value.split('-')[1] : '', // Display only the letter
+                              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    if (isCorrect)
+                      Positioned(
+                        top: 0,
+                        child: Icon(Icons.check_circle, color: Colors.green, size: 24),
                       ),
-                    );
-                  },
+                  ],
                 );
               },
             ),
