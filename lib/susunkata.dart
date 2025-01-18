@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 class Susunkata extends StatefulWidget {
   const Susunkata({Key? key}) : super(key: key);
@@ -8,10 +9,11 @@ class Susunkata extends StatefulWidget {
 }
 
 class _SusunState extends State<Susunkata> {
-  String correctWord = 'CRY'; // Single correct word
+  final String correctWord = 'CRY'; // Single correct word
   late List<String?> blocks;
   final List<String> letters = ['C', 'R', 'Y', 'A', 'B', 'C']; // Pool of letters
   final Map<String, bool> usedLetters = {}; // Track used letter instances
+  final FlutterTts flutterTts = FlutterTts(); // TTS instance
 
   @override
   void initState() {
@@ -35,12 +37,18 @@ class _SusunState extends State<Susunkata> {
         backgroundColor: Colors.green,
       ));
     } else {
-      // Display the incorrect word and show the correct one
+      // Display the incorrect word
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Wrong Word! Your answer: "$word"'),
         backgroundColor: Colors.red,
       ));
     }
+  }
+
+  Future<void> speakCorrectWord() async {
+    await flutterTts.setLanguage("en-US");
+    await flutterTts.setSpeechRate(0.5);
+    await flutterTts.speak(correctWord);
   }
 
   @override
@@ -50,17 +58,35 @@ class _SusunState extends State<Susunkata> {
     final double blockSize =
         (MediaQuery.of(context).size.width - (crossAxisCount + 1) * gridSpacing) / crossAxisCount;
 
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double imageSize = screenWidth * 0.35; // Set image size to 15% of screen width
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Susun kata'),
+        title: Text('Drag and Drop Letters'),
       ),
       body: Column(
         children: [
           SizedBox(height: 20),
           Text(
-            'Tonlonkkkkkk', // Placeholder text
+            'In Maintenance', // Placeholder text
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
           ),
+          SizedBox(height: 10),
+
+
+          GestureDetector(
+            onTap: speakCorrectWord, // Play TTS on image tap
+            child: Image.asset(
+              'assets/speaker_icon.png', // Add your image in assets folder
+              width: imageSize, // Responsive width
+              height: imageSize, // Responsive height
+            ),
+          ),
+
+
+
+
           SizedBox(height: 10), // Space between text and blocks
           Expanded(
             flex: 2, // Use 2/3 of available space for the blocks
