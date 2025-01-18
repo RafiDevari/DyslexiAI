@@ -1,4 +1,4 @@
-import 'package:dyslexiai/susunkata.dart';
+import 'package:dyslexiai/susunkata/susunkatalobi.dart';
 import 'package:flutter/material.dart';
 import 'package:dyslexiai/speechrecog.dart';
 import 'package:dyslexiai/canvas.dart';
@@ -56,7 +56,7 @@ class HomePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const Susunkata()),
+                  MaterialPageRoute(builder: (context) => Susunkatalobi()),
                 );
               },
               child: Text('SusunKata'),
