@@ -15,6 +15,8 @@ class _SusunState extends State<Susunkata> {
   final Map<String, bool> usedLetters = {}; // Track used letter instances
   final FlutterTts flutterTts = FlutterTts(); // TTS instance
   List<bool> correctPositions = []; // Track correct positions
+  int wrongAttempts = 0; // Counter for wrong attempts
+  Map<String, int> wrongLetterCounts = {}; // Track wrong letter frequencies
 
   @override
   void initState() {
@@ -25,10 +27,10 @@ class _SusunState extends State<Susunkata> {
   }
 
   void initializeUsedLetters() {
-    // Initialize usedLetters with unique keys for each letter
     for (int i = 0; i < letters.length; i++) {
       usedLetters['$i-${letters[i]}'] = false; // e.g., "0-C", "1-R"
     }
+    wrongLetterCounts = {};
   }
 
   void checkWord() {
@@ -38,6 +40,11 @@ class _SusunState extends State<Susunkata> {
     for (int i = 0; i < correctWord.length; i++) {
       if (blocks[i]?.split('-')[1] == correctWord[i]) {
         newCorrectPositions[i] = true;
+      } else {
+        String wrongLetter = blocks[i]?.split('-')[1] ?? '';
+        if (wrongLetter.isNotEmpty) {
+          wrongLetterCounts[wrongLetter] = (wrongLetterCounts[wrongLetter] ?? 0) + 1;
+        }
       }
     }
 
@@ -50,13 +57,60 @@ class _SusunState extends State<Susunkata> {
         content: Text('Correct Word! 🎉'),
         backgroundColor: Colors.green,
       ));
+      wrongAttempts = 0; // Reset wrong attempts
     } else {
-      // Display the incorrect word
+      wrongAttempts++;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Wrong Word! Your answer: "$word"'),
         backgroundColor: Colors.red,
       ));
+
+      if (wrongAttempts >= 3) {
+        showWrongAnalysisDialog();
+      }
     }
+  }
+
+  void showWrongAnalysisDialog() {
+    String mostWrongLetter = '';
+    int maxWrongCount = 0;
+
+    wrongLetterCounts.forEach((letter, count) {
+      if (count > maxWrongCount) {
+        mostWrongLetter = letter;
+        maxWrongCount = count;
+      }
+    });
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Hint'),
+          content: Text(
+            maxWrongCount > 0
+                ? 'LU BODOH DI HURUF : "$mostWrongLetter".'
+                : 'coba lagi ya :D',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Close'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                  return AnotherPage(); // Replace with your target page
+                }));
+              },
+              child: Text('Go to Help Page'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> speakCorrectWord() async {
@@ -68,7 +122,7 @@ class _SusunState extends State<Susunkata> {
   @override
   Widget build(BuildContext context) {
     final double gridSpacing = 8.0;
-    final int crossAxisCount = correctWord.length; // Number of blocks = word length
+    final int crossAxisCount = correctWord.length;
     final double blockSize =
         (MediaQuery.of(context).size.width - (crossAxisCount + 1) * gridSpacing) / crossAxisCount;
 
@@ -80,21 +134,21 @@ class _SusunState extends State<Susunkata> {
         children: [
           SizedBox(height: 20),
           Text(
-            'In Maintenance', // Placeholder text
+            'In Maintenance',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
           ),
           SizedBox(height: 10),
           GestureDetector(
-            onTap: speakCorrectWord, // Play TTS on image tap
+            onTap: speakCorrectWord,
             child: Image.asset(
-              'assets/speaker_icon.png', // Add your image in assets folder
+              'assets/speaker_icon.png',
               width: 50,
               height: 50,
             ),
           ),
-          SizedBox(height: 10), // Space between text and blocks
+          SizedBox(height: 10),
           Expanded(
-            flex: 2, // Use 2/3 of available space for the blocks
+            flex: 2,
             child: GridView.builder(
               padding: EdgeInsets.all(gridSpacing),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -105,7 +159,7 @@ class _SusunState extends State<Susunkata> {
               itemCount: blocks.length,
               itemBuilder: (context, index) {
                 String? value = blocks[index];
-                bool isCorrect = correctPositions[index]; // Check if the position is correct
+                bool isCorrect = correctPositions[index];
 
                 return Stack(
                   alignment: Alignment.center,
@@ -115,7 +169,7 @@ class _SusunState extends State<Susunkata> {
                       onAccept: (letter) {
                         setState(() {
                           blocks[index] = letter;
-                          usedLetters[letter] = true; // Mark letter as used
+                          usedLetters[letter] = true;
                         });
                       },
                       builder: (context, candidateData, rejectedData) {
@@ -123,8 +177,8 @@ class _SusunState extends State<Susunkata> {
                           onTap: () {
                             if (value != null) {
                               setState(() {
-                                usedLetters[value] = false; // Unmark letter as used
-                                blocks[index] = null; // Clear block
+                                usedLetters[value] = false;
+                                blocks[index] = null;
                               });
                             }
                           },
@@ -140,7 +194,7 @@ class _SusunState extends State<Susunkata> {
                             ),
                             alignment: Alignment.center,
                             child: Text(
-                              value != null ? value.split('-')[1] : '', // Display only the letter
+                              value != null ? value.split('-')[1] : '',
                               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -157,23 +211,23 @@ class _SusunState extends State<Susunkata> {
               },
             ),
           ),
-          SizedBox(height: 10), // Space between the blocks and button
+          SizedBox(height: 10),
           ElevatedButton(
             onPressed: checkWord,
             child: Text('Check Word'),
           ),
-          SizedBox(height: 10), // Space between the button and letters
+          SizedBox(height: 10),
           Flexible(
-            flex: 1, // Use 1/3 of available space for the letter pool
+            flex: 1,
             child: Padding(
-              padding: const EdgeInsets.all(10.0), // Add padding around the letter pool
+              padding: const EdgeInsets.all(10.0),
               child: Wrap(
-                spacing: 10, // Horizontal spacing between letters
-                runSpacing: 10, // Vertical spacing between rows of letters
+                spacing: 10,
+                runSpacing: 10,
                 children: usedLetters.entries.map((entry) {
                   String key = entry.key;
                   bool isUsed = entry.value;
-                  String letter = key.split('-')[1]; // Extract letter from key
+                  String letter = key.split('-')[1];
 
                   return Draggable<String>(
                     data: key,
@@ -224,6 +278,16 @@ class _SusunState extends State<Susunkata> {
           SizedBox(height: 20),
         ],
       ),
+    );
+  }
+}
+
+class AnotherPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Help Page')),
+      body: Center(child: Text('This is the help page!')),
     );
   }
 }
