@@ -1,7 +1,6 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:dyslexiai/training/trainingmain.dart';
-
 
 class Susunkata extends StatefulWidget {
   const Susunkata({Key? key}) : super(key: key);
@@ -11,32 +10,60 @@ class Susunkata extends StatefulWidget {
 }
 
 class _SusunState extends State<Susunkata> {
-  final String correctWord = 'CRY'; // Single correct word
+  final String correctWord = 'CRY';
+  late List<String> letters;
   late List<String?> blocks;
-  final List<String> letters = ['C', 'R', 'Y', 'A', 'B', 'C']; // Pool of letters
-  final Map<String, bool> usedLetters = {}; // Track used letter instances
-  final FlutterTts flutterTts = FlutterTts(); // TTS instance
-  List<bool> correctPositions = []; // Track correct positions
-  int wrongAttempts = 0; // Counter for wrong attempts
-  Map<String, int> wrongLetterCounts = {}; // Track wrong letter frequencies
+  final Map<String, bool> usedLetters = {};
+  final FlutterTts flutterTts = FlutterTts();
+  List<bool> correctPositions = [];
+  int wrongAttempts = 0;
+  Map<String, int> wrongLetterCounts = {};
+
+  final Map<String, List<String>> letterRules = {
+    'P': ['D', 'B'],
+    'B': ['D'],
+    'D': ['B'],
+  };
 
   @override
   void initState() {
     super.initState();
-    blocks = List.generate(correctWord.length, (index) => null); // Initialize blocks
-    correctPositions = List.generate(correctWord.length, (index) => false); // Initialize correct positions
+    letters = generateLetters();
+    blocks = List.generate(correctWord.length, (index) => null);
+    correctPositions = List.generate(correctWord.length, (index) => false);
     initializeUsedLetters();
+  }
+
+  List<String> generateLetters() {
+    List<String> generatedLetters = correctWord.split('');
+    Random random = Random();
+
+    // Add additional letters based on rules
+    for (String letter in correctWord.split('')) {
+      if (letterRules.containsKey(letter)) {
+        generatedLetters.addAll(letterRules[letter]!);
+      }
+    }
+
+    // Fill the rest with random letters to reach double the correct word size
+    while (generatedLetters.length < correctWord.length * 2) {
+      String randomLetter = String.fromCharCode(random.nextInt(26) + 65); // Random A-Z
+      generatedLetters.add(randomLetter);
+    }
+
+    generatedLetters.shuffle(); // Shuffle the letters
+    return generatedLetters;
   }
 
   void initializeUsedLetters() {
     for (int i = 0; i < letters.length; i++) {
-      usedLetters['$i-${letters[i]}'] = false; // e.g., "0-C", "1-R"
+      usedLetters['$i-${letters[i]}'] = false;
     }
     wrongLetterCounts = {};
   }
 
   void checkWord() {
-    String word = blocks.map((block) => block?.split('-')[1] ?? '').join(); // Form the word
+    String word = blocks.map((block) => block?.split('-')[1] ?? '').join();
     List<bool> newCorrectPositions = List.generate(correctWord.length, (index) => false);
 
     for (int i = 0; i < correctWord.length; i++) {
@@ -59,7 +86,7 @@ class _SusunState extends State<Susunkata> {
         content: Text('Correct Word! 🎉'),
         backgroundColor: Colors.green,
       ));
-      wrongAttempts = 0; // Reset wrong attempts
+      wrongAttempts = 0;
     } else {
       wrongAttempts++;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -91,19 +118,21 @@ class _SusunState extends State<Susunkata> {
           title: Text('Hint'),
           content: Text(
             maxWrongCount > 0
-                ? 'LU BODOH DI HURUF : "$mostWrongLetter".'
-                : 'coba lagi ya :D',
+                ? 'You have been wrong the most with the letter "$mostWrongLetter".'
+                : 'Keep trying!',
           ),
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
               },
               child: Text('Close'),
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => TrainingMain()));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                  return AnotherPage();
+                }));
               },
               child: Text('Go to Help Page'),
             ),
@@ -278,6 +307,16 @@ class _SusunState extends State<Susunkata> {
           SizedBox(height: 20),
         ],
       ),
+    );
+  }
+}
+
+class AnotherPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Help Page')),
+      body: Center(child: Text('This is the help page!')),
     );
   }
 }

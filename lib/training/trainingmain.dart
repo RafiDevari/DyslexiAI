@@ -5,7 +5,7 @@ class TrainingMain extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Susunkatalobi'),
+        title: Text('Training Camp'),
       ),
       body: Center(
         child: Column(
