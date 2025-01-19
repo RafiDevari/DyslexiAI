@@ -10,6 +10,7 @@ class Susunkata extends StatefulWidget {
 }
 
 class _SusunState extends State<Susunkata> {
+  String mispelledDetails = '';
   final String correctWord = 'CRY';
   late List<String> letters;
   late List<String?> blocks;
@@ -65,6 +66,7 @@ class _SusunState extends State<Susunkata> {
   void checkWord() {
     String word = blocks.map((block) => block?.split('-')[1] ?? '').join();
     List<bool> newCorrectPositions = List.generate(correctWord.length, (index) => false);
+    mispelledDetails = ''; // Clear previous details
 
     for (int i = 0; i < correctWord.length; i++) {
       if (blocks[i]?.split('-')[1] == correctWord[i]) {
@@ -72,6 +74,7 @@ class _SusunState extends State<Susunkata> {
       } else {
         String wrongLetter = blocks[i]?.split('-')[1] ?? '';
         if (wrongLetter.isNotEmpty) {
+          mispelledDetails += 'Mispelled $wrongLetter to ${correctWord[i]}\n';
           wrongLetterCounts[wrongLetter] = (wrongLetterCounts[wrongLetter] ?? 0) + 1;
         }
       }
@@ -100,6 +103,9 @@ class _SusunState extends State<Susunkata> {
     }
   }
 
+
+
+
   void showWrongAnalysisDialog() {
     String mostWrongLetter = '';
     int maxWrongCount = 0;
@@ -116,10 +122,18 @@ class _SusunState extends State<Susunkata> {
       builder: (context) {
         return AlertDialog(
           title: Text('Hint'),
-          content: Text(
-            maxWrongCount > 0
-                ? 'You have been wrong the most with the letter "$mostWrongLetter".'
-                : 'Keep trying!',
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (mispelledDetails.isNotEmpty)
+                Text('Details:\n$mispelledDetails', style: TextStyle(color: Colors.red)),
+              if (maxWrongCount > 0)
+                Text(
+                  'You have been wrong the most with the letter "$mostWrongLetter".',
+                  style: TextStyle(color: Colors.blue),
+                ),
+            ],
           ),
           actions: [
             TextButton(
