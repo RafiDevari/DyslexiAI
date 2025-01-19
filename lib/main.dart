@@ -1,4 +1,5 @@
 import 'package:dyslexiai/susunkata/susunkatalobi.dart';
+import 'package:dyslexiai/training/trainingmain.dart';
 import 'package:flutter/material.dart';
 import 'package:dyslexiai/speechrecog.dart';
 import 'package:dyslexiai/canvas.dart';
@@ -32,6 +33,16 @@ class HomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => TrainingMain()),
+                );
+              },
+              child: Text('Training camp'),
+            ),
+            SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(

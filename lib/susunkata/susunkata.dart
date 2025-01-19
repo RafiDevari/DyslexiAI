@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:dyslexiai/training/trainingmain.dart';
+
 
 class Susunkata extends StatefulWidget {
   const Susunkata({Key? key}) : super(key: key);
@@ -101,9 +103,7 @@ class _SusunState extends State<Susunkata> {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                  return AnotherPage(); // Replace with your target page
-                }));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => TrainingMain()));
               },
               child: Text('Go to Help Page'),
             ),
@@ -278,16 +278,6 @@ class _SusunState extends State<Susunkata> {
           SizedBox(height: 20),
         ],
       ),
-    );
-  }
-}
-
-class AnotherPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Help Page')),
-      body: Center(child: Text('This is the help page!')),
     );
   }
 }
