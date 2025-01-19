@@ -66,7 +66,7 @@ class _SusunState extends State<Susunkata> {
   void checkWord() {
     String word = blocks.map((block) => block?.split('-')[1] ?? '').join();
     List<bool> newCorrectPositions = List.generate(correctWord.length, (index) => false);
-    mispelledDetails = ''; // Clear previous details
+    String currentMispelledDetails = ''; // Store details for the current attempt
 
     for (int i = 0; i < correctWord.length; i++) {
       if (blocks[i]?.split('-')[1] == correctWord[i]) {
@@ -74,7 +74,7 @@ class _SusunState extends State<Susunkata> {
       } else {
         String wrongLetter = blocks[i]?.split('-')[1] ?? '';
         if (wrongLetter.isNotEmpty) {
-          mispelledDetails += 'Mispelled $wrongLetter to ${correctWord[i]}\n';
+          currentMispelledDetails += 'Mispelled $wrongLetter to ${correctWord[i]}\n';
           wrongLetterCounts[wrongLetter] = (wrongLetterCounts[wrongLetter] ?? 0) + 1;
         }
       }
@@ -84,13 +84,34 @@ class _SusunState extends State<Susunkata> {
       correctPositions = newCorrectPositions;
     });
 
+    // Accumulate all mispelled words over time
+    if (currentMispelledDetails.isNotEmpty) {
+      mispelledDetails += currentMispelledDetails;
+    }
+
     if (word == correctWord) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Correct Word! 🎉'),
-        backgroundColor: Colors.green,
-      ));
-      wrongAttempts = 0;
+      // Word is correct
+      Future.delayed(Duration(seconds: 2), () {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('🎉 Congratulations!'),
+              content: Text('You have guessed the correct word: "$correctWord"!'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      });
     } else {
+      // Word is incorrect
       wrongAttempts++;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Wrong Word! Your answer: "$word"'),
@@ -127,7 +148,9 @@ class _SusunState extends State<Susunkata> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (mispelledDetails.isNotEmpty)
-                Text('Details:\n$mispelledDetails', style: TextStyle(color: Colors.red)),
+                Text('Details:\n$mispelledDetails', style: TextStyle(color: Colors.red))
+              else
+                Text('You have been wrong 3 times in a row'),
               if (maxWrongCount > 0)
                 Text(
                   'You have been wrong the most with the letter "$mostWrongLetter".',
@@ -255,10 +278,6 @@ class _SusunState extends State<Susunkata> {
             ),
           ),
           SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: checkWord,
-            child: Text('Check Word'),
-          ),
           SizedBox(height: 10),
           Flexible(
             flex: 1,
@@ -319,6 +338,10 @@ class _SusunState extends State<Susunkata> {
             ),
           ),
           SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: checkWord,
+            child: Text('Check Word'),
+          ),
         ],
       ),
     );
