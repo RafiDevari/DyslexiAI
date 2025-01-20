@@ -63,10 +63,12 @@ class _SusunState extends State<Susunkata> {
     wrongLetterCounts = {};
   }
 
+  int lives = 3; // Initial number of hearts
+
   void checkWord() {
     String word = blocks.map((block) => block?.split('-')[1] ?? '').join();
     List<bool> newCorrectPositions = List.generate(correctWord.length, (index) => false);
-    String currentMispelledDetails = ''; // Store details for the current attempt
+    String currentMispelledDetails = '';
 
     for (int i = 0; i < correctWord.length; i++) {
       if (blocks[i]?.split('-')[1] == correctWord[i]) {
@@ -84,20 +86,18 @@ class _SusunState extends State<Susunkata> {
       correctPositions = newCorrectPositions;
     });
 
-    // Accumulate all mispelled words over time
     if (currentMispelledDetails.isNotEmpty) {
       mispelledDetails += currentMispelledDetails;
     }
 
     if (word == correctWord) {
-      // Word is correct
       Future.delayed(Duration(seconds: 2), () {
         showDialog(
           context: context,
           builder: (context) {
             return AlertDialog(
               title: Text('🎉 Congratulations!'),
-              content: Text('You have guessed the correct word: "$correctWord"!'),
+              content: Text('You guessed the correct word: "$correctWord"!'),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -111,17 +111,48 @@ class _SusunState extends State<Susunkata> {
         );
       });
     } else {
-      // Word is incorrect
       wrongAttempts++;
+      lives--; // Deduct a heart
+
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Wrong Word! Your answer: "$word"'),
         backgroundColor: Colors.red,
       ));
 
-      if (wrongAttempts >= 3) {
+      if (lives <= 0) {
+        showGameOverDialog();
+      } else if (wrongAttempts >= 3) {
         showWrongAnalysisDialog();
       }
     }
+  }
+
+  void showGameOverDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('💔 Game Over'),
+          content: Text(mispelledDetails),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                resetGame();
+              },
+              child: Text('Restart'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void resetGame() {
+    Navigator.of(context).pop(); // Close the pop-up
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => Susunkata()),
+    );
   }
 
 
@@ -194,7 +225,18 @@ class _SusunState extends State<Susunkata> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Drag and Drop Letters'),
+        title: Text('Word Game'),
+        actions: [
+          Row(
+            children: List.generate(3, (index) {
+              return Icon(
+                index < lives ? Icons.favorite : Icons.favorite_border,
+                color: Colors.red,
+              );
+            }),
+          ),
+          SizedBox(width: 16),
+        ],
       ),
       body: Column(
         children: [
