@@ -1,9 +1,12 @@
 import 'dart:math';
+import 'package:dyslexiai/training/trainingmain.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 class Susunkata extends StatefulWidget {
-  const Susunkata({Key? key}) : super(key: key);
+  final String correctWord;  // Add a constructor parameter
+
+  const Susunkata({super.key, required this.correctWord});
 
   @override
   State<Susunkata> createState() => _SusunState();
@@ -11,7 +14,7 @@ class Susunkata extends StatefulWidget {
 
 class _SusunState extends State<Susunkata> {
   String mispelledDetails = '';
-  final String correctWord = 'CRY';
+  late String correctWord;
   late List<String> letters;
   late List<String?> blocks;
   final Map<String, bool> usedLetters = {};
@@ -24,11 +27,15 @@ class _SusunState extends State<Susunkata> {
     'P': ['D', 'B'],
     'B': ['D'],
     'D': ['B'],
+    'C': ['O','D','Q'],
+    'O': ['C','Q','D'],
+    'R': ['P','B','B']
   };
 
   @override
   void initState() {
     super.initState();
+    correctWord = widget.correctWord;
     letters = generateLetters();
     blocks = List.generate(correctWord.length, (index) => null);
     correctPositions = List.generate(correctWord.length, (index) => false);
@@ -130,28 +137,38 @@ class _SusunState extends State<Susunkata> {
   void showGameOverDialog() {
     showDialog(
       context: context,
+      barrierDismissible: false,  // Prevent closing the dialog without choosing
       builder: (context) {
         return AlertDialog(
           title: Text('💔 Game Over'),
-          content: Text(mispelledDetails),
+          content: Text('You have used all your hearts! What would you like to do next?'),
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
-                resetGame();
+                resetGame();  // Restart the current game
               },
               child: Text('Restart'),
             ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();  // Close the dialog
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => TrainingMain()),
+                );
+              },
+              child: Text('Go to Training'),
+            )
           ],
         );
       },
     );
   }
 
+
   void resetGame() {
     Navigator.of(context).pop(); // Close the pop-up
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => Susunkata()),
+      MaterialPageRoute(builder: (context) => Susunkata(correctWord: correctWord,)),
     );
   }
 

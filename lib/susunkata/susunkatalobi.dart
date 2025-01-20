@@ -16,7 +16,7 @@ class Susunkatalobi extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Susunkata()),
+                  MaterialPageRoute(builder: (context) => Susunkata(correctWord: "POPOK",)),
                 );
               },
               child: Text('Susunkata Biasa'),
