@@ -141,7 +141,7 @@ class _SusunState extends State<Susunkata> {
       builder: (context) {
         return AlertDialog(
           title: Text('💔 Game Over'),
-          content: Text('You have used all your hearts! What would you like to do next?'),
+          content: Text('You have used all your hearts! What would you like to do next?'+mispelledDetails),
           actions: [
             TextButton(
               onPressed: () {
@@ -228,7 +228,7 @@ class _SusunState extends State<Susunkata> {
   }
 
   Future<void> speakCorrectWord() async {
-    await flutterTts.setLanguage("en-US");
+    await flutterTts.setLanguage("id-ID");
     await flutterTts.setSpeechRate(0.5);
     await flutterTts.speak(correctWord);
   }

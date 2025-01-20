@@ -1,5 +1,5 @@
+import 'package:dyslexiai/susunkata/levelselector.dart';
 import 'package:flutter/material.dart';
-import 'package:dyslexiai/susunkata/susunkata.dart';
 
 class Susunkatalobi extends StatelessWidget {
   @override
@@ -16,10 +16,10 @@ class Susunkatalobi extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Susunkata(correctWord: "POPOK",)),
+                  MaterialPageRoute(builder: (context) => Susunkatalevelselector()),
                 );
               },
-              child: Text('Susunkata Biasa'),
+              child: Text('Adventure Mode'),
             ),
 
             SizedBox(height: 20),
@@ -29,7 +29,7 @@ class Susunkatalobi extends StatelessWidget {
                 // Define the action for the second button
                 print('Second button pressed');
               },
-              child: Text('Button 2'),
+              child: Text('Endless Mode'),
             ),
           ],
         ),
