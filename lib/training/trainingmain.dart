@@ -1,12 +1,11 @@
-import 'package:dyslexiai/susunkata/levelselector.dart';
 import 'package:flutter/material.dart';
 
-class Susunkatalobi extends StatelessWidget {
+class TrainingMain extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Susunkatalobi'),
+        title: Text('Training Camp'),
       ),
       body: Center(
         child: Column(
@@ -14,12 +13,12 @@ class Susunkatalobi extends StatelessWidget {
           children: [
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Susunkatalevelselector()),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => Susunkata()),
+                // );
               },
-              child: Text('Adventure Mode'),
+              child: Text('Training 1'),
             ),
 
             SizedBox(height: 20),
@@ -29,7 +28,7 @@ class Susunkatalobi extends StatelessWidget {
                 // Define the action for the second button
                 print('Second button pressed');
               },
-              child: Text('Endless Mode'),
+              child: Text('Button 2'),
             ),
           ],
         ),

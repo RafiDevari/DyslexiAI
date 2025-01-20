@@ -1,43 +1,91 @@
+import 'dart:math';
+import 'package:dyslexiai/training/trainingmain.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 class Susunkata extends StatefulWidget {
-  const Susunkata({Key? key}) : super(key: key);
+  final String correctWord;  // Add a constructor parameter
+
+  const Susunkata({super.key, required this.correctWord});
 
   @override
   State<Susunkata> createState() => _SusunState();
 }
 
 class _SusunState extends State<Susunkata> {
-  final String correctWord = 'CRY'; // Single correct word
+  String mispelledDetails = '';
+  late String correctWord;
+  late List<String> letters;
   late List<String?> blocks;
-  final List<String> letters = ['C', 'R', 'Y', 'A', 'B', 'C']; // Pool of letters
-  final Map<String, bool> usedLetters = {}; // Track used letter instances
-  final FlutterTts flutterTts = FlutterTts(); // TTS instance
-  List<bool> correctPositions = []; // Track correct positions
+  final Map<String, bool> usedLetters = {};
+  final FlutterTts flutterTts = FlutterTts();
+  List<bool> correctPositions = [];
+  int wrongAttempts = 0;
+  Map<String, int> wrongLetterCounts = {};
+
+  final Map<String, List<String>> letterRules = {
+    'P': ['D', 'B'],
+    'B': ['D'],
+    'D': ['B'],
+    'C': ['O','D','Q'],
+    'O': ['C','Q','D'],
+    'R': ['P','B','B']
+  };
 
   @override
   void initState() {
     super.initState();
-    blocks = List.generate(correctWord.length, (index) => null); // Initialize blocks
-    correctPositions = List.generate(correctWord.length, (index) => false); // Initialize correct positions
+    correctWord = widget.correctWord;
+    letters = generateLetters();
+    blocks = List.generate(correctWord.length, (index) => null);
+    correctPositions = List.generate(correctWord.length, (index) => false);
     initializeUsedLetters();
   }
 
-  void initializeUsedLetters() {
-    // Initialize usedLetters with unique keys for each letter
-    for (int i = 0; i < letters.length; i++) {
-      usedLetters['$i-${letters[i]}'] = false; // e.g., "0-C", "1-R"
+  List<String> generateLetters() {
+    List<String> generatedLetters = correctWord.split('');
+    Random random = Random();
+
+    // Add additional letters based on rules
+    for (String letter in correctWord.split('')) {
+      if (letterRules.containsKey(letter)) {
+        generatedLetters.addAll(letterRules[letter]!);
+      }
     }
+
+    // Fill the rest with random letters to reach double the correct word size
+    while (generatedLetters.length < correctWord.length * 2) {
+      String randomLetter = String.fromCharCode(random.nextInt(26) + 65); // Random A-Z
+      generatedLetters.add(randomLetter);
+    }
+
+    generatedLetters.shuffle(); // Shuffle the letters
+    return generatedLetters;
   }
 
+  void initializeUsedLetters() {
+    for (int i = 0; i < letters.length; i++) {
+      usedLetters['$i-${letters[i]}'] = false;
+    }
+    wrongLetterCounts = {};
+  }
+
+  int lives = 3; // Initial number of hearts
+
   void checkWord() {
-    String word = blocks.map((block) => block?.split('-')[1] ?? '').join(); // Form the word
+    String word = blocks.map((block) => block?.split('-')[1] ?? '').join();
     List<bool> newCorrectPositions = List.generate(correctWord.length, (index) => false);
+    String currentMispelledDetails = '';
 
     for (int i = 0; i < correctWord.length; i++) {
       if (blocks[i]?.split('-')[1] == correctWord[i]) {
         newCorrectPositions[i] = true;
+      } else {
+        String wrongLetter = blocks[i]?.split('-')[1] ?? '';
+        if (wrongLetter.isNotEmpty) {
+          currentMispelledDetails += 'Mispelled $wrongLetter to ${correctWord[i]}\n';
+          wrongLetterCounts[wrongLetter] = (wrongLetterCounts[wrongLetter] ?? 0) + 1;
+        }
       }
     }
 
@@ -45,22 +93,142 @@ class _SusunState extends State<Susunkata> {
       correctPositions = newCorrectPositions;
     });
 
+    if (currentMispelledDetails.isNotEmpty) {
+      mispelledDetails += currentMispelledDetails;
+    }
+
     if (word == correctWord) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Correct Word! 🎉'),
-        backgroundColor: Colors.green,
-      ));
+      Future.delayed(Duration(seconds: 2), () {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('🎉 Congratulations!'),
+              content: Text('You guessed the correct word: "$correctWord"!'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      });
     } else {
-      // Display the incorrect word
+      wrongAttempts++;
+      lives--; // Deduct a heart
+
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Wrong Word! Your answer: "$word"'),
         backgroundColor: Colors.red,
       ));
+
+      if (lives <= 0) {
+        showGameOverDialog();
+      } else if (wrongAttempts >= 3) {
+        showWrongAnalysisDialog();
+      }
     }
   }
 
+  void showGameOverDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,  // Prevent closing the dialog without choosing
+      builder: (context) {
+        return AlertDialog(
+          title: Text('💔 Game Over'),
+          content: Text('You have used all your hearts! What would you like to do next?'+mispelledDetails),
+          actions: [
+            TextButton(
+              onPressed: () {
+                resetGame();  // Restart the current game
+              },
+              child: Text('Restart'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();  // Close the dialog
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => TrainingMain()),
+                );
+              },
+              child: Text('Go to Training'),
+            )
+          ],
+        );
+      },
+    );
+  }
+
+
+  void resetGame() {
+    Navigator.of(context).pop(); // Close the pop-up
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => Susunkata(correctWord: correctWord,)),
+    );
+  }
+
+
+
+
+  void showWrongAnalysisDialog() {
+    String mostWrongLetter = '';
+    int maxWrongCount = 0;
+
+    wrongLetterCounts.forEach((letter, count) {
+      if (count > maxWrongCount) {
+        mostWrongLetter = letter;
+        maxWrongCount = count;
+      }
+    });
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Hint'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (mispelledDetails.isNotEmpty)
+                Text('Details:\n$mispelledDetails', style: TextStyle(color: Colors.red))
+              else
+                Text('You have been wrong 3 times in a row'),
+              if (maxWrongCount > 0)
+                Text(
+                  'You have been wrong the most with the letter "$mostWrongLetter".',
+                  style: TextStyle(color: Colors.blue),
+                ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Close'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                  return AnotherPage();
+                }));
+              },
+              child: Text('Go to Help Page'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> speakCorrectWord() async {
-    await flutterTts.setLanguage("en-US");
+    await flutterTts.setLanguage("id-ID");
     await flutterTts.setSpeechRate(0.5);
     await flutterTts.speak(correctWord);
   }
@@ -68,33 +236,44 @@ class _SusunState extends State<Susunkata> {
   @override
   Widget build(BuildContext context) {
     final double gridSpacing = 8.0;
-    final int crossAxisCount = correctWord.length; // Number of blocks = word length
+    final int crossAxisCount = correctWord.length;
     final double blockSize =
         (MediaQuery.of(context).size.width - (crossAxisCount + 1) * gridSpacing) / crossAxisCount;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Drag and Drop Letters'),
+        title: Text('Word Game'),
+        actions: [
+          Row(
+            children: List.generate(3, (index) {
+              return Icon(
+                index < lives ? Icons.favorite : Icons.favorite_border,
+                color: Colors.red,
+              );
+            }),
+          ),
+          SizedBox(width: 16),
+        ],
       ),
       body: Column(
         children: [
           SizedBox(height: 20),
           Text(
-            'In Maintenance', // Placeholder text
+            'In Maintenance',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
           ),
           SizedBox(height: 10),
           GestureDetector(
-            onTap: speakCorrectWord, // Play TTS on image tap
+            onTap: speakCorrectWord,
             child: Image.asset(
-              'assets/speaker_icon.png', // Add your image in assets folder
+              'assets/speaker_icon.png',
               width: 50,
               height: 50,
             ),
           ),
-          SizedBox(height: 10), // Space between text and blocks
+          SizedBox(height: 10),
           Expanded(
-            flex: 2, // Use 2/3 of available space for the blocks
+            flex: 2,
             child: GridView.builder(
               padding: EdgeInsets.all(gridSpacing),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -105,7 +284,7 @@ class _SusunState extends State<Susunkata> {
               itemCount: blocks.length,
               itemBuilder: (context, index) {
                 String? value = blocks[index];
-                bool isCorrect = correctPositions[index]; // Check if the position is correct
+                bool isCorrect = correctPositions[index];
 
                 return Stack(
                   alignment: Alignment.center,
@@ -115,7 +294,7 @@ class _SusunState extends State<Susunkata> {
                       onAccept: (letter) {
                         setState(() {
                           blocks[index] = letter;
-                          usedLetters[letter] = true; // Mark letter as used
+                          usedLetters[letter] = true;
                         });
                       },
                       builder: (context, candidateData, rejectedData) {
@@ -123,8 +302,8 @@ class _SusunState extends State<Susunkata> {
                           onTap: () {
                             if (value != null) {
                               setState(() {
-                                usedLetters[value] = false; // Unmark letter as used
-                                blocks[index] = null; // Clear block
+                                usedLetters[value] = false;
+                                blocks[index] = null;
                               });
                             }
                           },
@@ -140,7 +319,7 @@ class _SusunState extends State<Susunkata> {
                             ),
                             alignment: Alignment.center,
                             child: Text(
-                              value != null ? value.split('-')[1] : '', // Display only the letter
+                              value != null ? value.split('-')[1] : '',
                               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -157,23 +336,19 @@ class _SusunState extends State<Susunkata> {
               },
             ),
           ),
-          SizedBox(height: 10), // Space between the blocks and button
-          ElevatedButton(
-            onPressed: checkWord,
-            child: Text('Check Word'),
-          ),
-          SizedBox(height: 10), // Space between the button and letters
+          SizedBox(height: 10),
+          SizedBox(height: 10),
           Flexible(
-            flex: 1, // Use 1/3 of available space for the letter pool
+            flex: 1,
             child: Padding(
-              padding: const EdgeInsets.all(10.0), // Add padding around the letter pool
+              padding: const EdgeInsets.all(10.0),
               child: Wrap(
-                spacing: 10, // Horizontal spacing between letters
-                runSpacing: 10, // Vertical spacing between rows of letters
+                spacing: 10,
+                runSpacing: 10,
                 children: usedLetters.entries.map((entry) {
                   String key = entry.key;
                   bool isUsed = entry.value;
-                  String letter = key.split('-')[1]; // Extract letter from key
+                  String letter = key.split('-')[1];
 
                   return Draggable<String>(
                     data: key,
@@ -222,8 +397,22 @@ class _SusunState extends State<Susunkata> {
             ),
           ),
           SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: checkWord,
+            child: Text('Check Word'),
+          ),
         ],
       ),
+    );
+  }
+}
+
+class AnotherPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Help Page')),
+      body: Center(child: Text('This is the help page!')),
     );
   }
 }
