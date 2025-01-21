@@ -112,25 +112,14 @@ class _SusunState extends State<modeEndless> {
     }
 
     if (word == correctWord) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Correct Word!'),
+        backgroundColor: Colors.green,
+      ));
+
       Future.delayed(Duration(seconds: 2), () {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text('🎉 Congratulations!'),
-              content: Text('You guessed the correct word: "$correctWord"!'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    resetGame(lives,score+1);
-                  },
-                  child: Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
+        Navigator.of(context).pop();
+        resetGame(lives,score+1);
       });
     } else {
       wrongAttempts++;
@@ -182,9 +171,12 @@ class _SusunState extends State<modeEndless> {
 
   void resetGame(int lives,int score) {
     Navigator.of(context).pop(); // Close the pop-up
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => modeEndless(health: lives,score: score,),
-    ));
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => modeEndless(health: lives,score: score,),
+      ),
+    );
   }
 
 
