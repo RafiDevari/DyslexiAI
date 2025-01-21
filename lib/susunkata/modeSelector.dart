@@ -1,5 +1,7 @@
-import 'package:dyslexiai/susunkata/levelselector.dart';
+import 'package:dyslexiai/susunkata/levelSelector.dart';
 import 'package:flutter/material.dart';
+
+import 'modeEndless.dart';
 
 class Susunkatalobi extends StatelessWidget {
   @override
@@ -27,7 +29,12 @@ class Susunkatalobi extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 // Define the action for the second button
-                print('Second button pressed');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => modeEndless(health: 3,score: 0,),
+                  ),
+                );
               },
               child: Text('Endless Mode'),
             ),

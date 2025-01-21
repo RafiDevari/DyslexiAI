@@ -1,4 +1,4 @@
-import 'package:dyslexiai/susunkata/susunkatalobi.dart';
+import 'package:dyslexiai/susunkata/modeSelector.dart';
 import 'package:dyslexiai/training/trainingmain.dart';
 import 'package:flutter/material.dart';
 import 'package:dyslexiai/speechrecog.dart';
