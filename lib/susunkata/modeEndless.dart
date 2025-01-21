@@ -15,7 +15,16 @@ class modeEndless extends StatefulWidget {
 class _SusunState extends State<modeEndless> {
 
   String mispelledDetails = '';
-  late String correctWord = 'LOL';
+
+
+  List<String> randomWords = [
+    'IKAN', 'RUMAH', 'MAKANAN', 'KUCING', 'ANJING',
+    'KELINCI', 'KUDA', 'SAPI', 'AYAM', 'KAMBING',
+    'BEBEK', 'LIMBUS', 'KELELAWAR'
+  ];
+  late String correctWord;
+
+
   late int score ;
   late List<String> letters;
   late List<String?> blocks;
@@ -38,6 +47,7 @@ class _SusunState extends State<modeEndless> {
   @override
   void initState() {
     super.initState();
+    correctWord = randomWords[Random().nextInt(randomWords.length)];
     lives = widget.health;
     score = widget.score;
     letters = generateLetters();
