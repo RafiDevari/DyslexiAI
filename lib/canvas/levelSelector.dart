@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:dyslexiai/susunkata/susunkata.dart';
 
-class Susunkatalevelselector extends StatelessWidget {
+class Canvaslevelselector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,10 +13,10 @@ class Susunkatalevelselector extends StatelessWidget {
           children: [
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Susunkata(correctWord: "IKAN",)),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => ),
+                // );
               },
               child: Text('Level 1'),
             ),
@@ -26,10 +25,10 @@ class Susunkatalevelselector extends StatelessWidget {
 
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Susunkata(correctWord: "RUMAH",)),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => ),
+                // );
               },
               child: Text('Level 2'),
             ),
@@ -38,10 +37,10 @@ class Susunkatalevelselector extends StatelessWidget {
 
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Susunkata(correctWord: "MAKANAN",)),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => ),
+                // );
               },
               child: Text('Level 3'),
             ),

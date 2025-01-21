@@ -1,12 +1,13 @@
-import 'package:dyslexiai/susunkata/levelselector.dart';
 import 'package:flutter/material.dart';
+import 'canvas.dart';
+import 'levelSelector.dart';
 
-class Susunkatalobi extends StatelessWidget {
+class Canvaslobi extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Susunkatalobi'),
+        title: Text('Canvas Lobi'),
       ),
       body: Center(
         child: Column(
@@ -16,18 +17,22 @@ class Susunkatalobi extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Susunkatalevelselector()),
+                  MaterialPageRoute(builder: (context) => Canvaslevelselector()),
                 );
               },
-              child: Text('Adventure Mode'),
+              child: Text('Mode Huruf'),
             ),
 
             SizedBox(height: 20),
 
             ElevatedButton(
               onPressed: () {
-                // Define the action for the second button
-                print('Second button pressed');
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) => modeEndless(health: 3,score: 0,),
+                //   ),
+                // );
               },
               child: Text('Endless Mode'),
             ),
