@@ -18,9 +18,7 @@ class _SusunState extends State<modeEndless> {
 
 
   List<String> randomWords = [
-    'IKAN', 'RUMAH', 'MAKANAN', 'KUCING', 'ANJING',
-    'KELINCI', 'KUDA', 'SAPI', 'AYAM', 'KAMBING',
-    'BEBEK', 'LIMBUS', 'KELELAWAR'
+    'I'
   ];
   late String correctWord;
 
@@ -169,8 +167,7 @@ class _SusunState extends State<modeEndless> {
   }
 
 
-  void resetGame(int lives,int score) {
-    Navigator.of(context).pop(); // Close the pop-up
+  void resetGame(int lives,int score) {// Close the pop-up
     Navigator.push(
       context,
       MaterialPageRoute(
