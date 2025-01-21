@@ -2,12 +2,14 @@ import 'dart:math';
 import 'package:dyslexiai/training/trainingmain.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:dyslexiai/data/susunKataEndlessData.dart';
 
 class modeEndless extends StatefulWidget {
   final int health;// Add a constructor parameter
   final int score;
+  final String mispelledDetails;
 
-  const modeEndless({super.key, required this.health, required this.score});
+  const modeEndless({super.key, required this.health, required this.score, this.mispelledDetails = ''});
   @override
   State<modeEndless> createState() => _SusunState();
 }
@@ -15,37 +17,23 @@ class modeEndless extends StatefulWidget {
 class _SusunState extends State<modeEndless> {
 
   String mispelledDetails = '';
-
-
-  List<String> randomWords = [
-    'I'
-  ];
   late String correctWord;
-
-
   late int score ;
   late List<String> letters;
   late List<String?> blocks;
   final Map<String, bool> usedLetters = {};
   final FlutterTts flutterTts = FlutterTts();
   List<bool> correctPositions = [];
-  late int wrongAttempts = 0;
   late int lives;
   Map<String, int> wrongLetterCounts = {};
 
-  final Map<String, List<String>> letterRules = {
-    'P': ['D', 'B'],
-    'B': ['D'],
-    'D': ['B'],
-    'C': ['O','D','Q'],
-    'O': ['C','Q','D'],
-    'R': ['P','B','B']
-  };
+
 
   @override
   void initState() {
     super.initState();
-    correctWord = randomWords[Random().nextInt(randomWords.length)];
+    mispelledDetails = widget.mispelledDetails;
+    correctWord = wordList[Random().nextInt(wordList.length)];
     lives = widget.health;
     score = widget.score;
     letters = generateLetters();
@@ -95,7 +83,7 @@ class _SusunState extends State<modeEndless> {
       } else {
         String wrongLetter = blocks[i]?.split('-')[1] ?? '';
         if (wrongLetter.isNotEmpty) {
-          currentMispelledDetails += 'Mispelled $wrongLetter to ${correctWord[i]}\n';
+          currentMispelledDetails += '\nMispelled ${correctWord[i] } to $wrongLetter';
           wrongLetterCounts[wrongLetter] = (wrongLetterCounts[wrongLetter] ?? 0) + 1;
         }
       }
@@ -117,10 +105,9 @@ class _SusunState extends State<modeEndless> {
 
       Future.delayed(Duration(seconds: 2), () {
         Navigator.of(context).pop();
-        resetGame(lives,score+1);
+        resetGame(lives,score+1,mispelledDetails);
       });
     } else {
-      wrongAttempts++;
       lives--; // Deduct a heart
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -130,8 +117,6 @@ class _SusunState extends State<modeEndless> {
 
       if (lives <= 0) {
         showGameOverDialog();
-      } else if (wrongAttempts >= 3) {
-        showWrongAnalysisDialog();
       }
     }
   }
@@ -147,6 +132,7 @@ class _SusunState extends State<modeEndless> {
           actions: [
             TextButton(
               onPressed: () {
+                Navigator.of(context).pop();   // Close the dialog
                 resetGame(3,0);  // Restart the current game
               },
               child: Text('Restart'),
@@ -167,69 +153,15 @@ class _SusunState extends State<modeEndless> {
   }
 
 
-  void resetGame(int lives,int score) {// Close the pop-up
+  void resetGame(int lives,int score, [String mispelledDetails = ""]) {// Close the pop-up
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => modeEndless(health: lives,score: score,),
+        builder: (context) => modeEndless(health: lives,score: score,mispelledDetails: mispelledDetails),
       ),
     );
   }
 
-
-
-
-  void showWrongAnalysisDialog() {
-    String mostWrongLetter = '';
-    int maxWrongCount = 0;
-
-    wrongLetterCounts.forEach((letter, count) {
-      if (count > maxWrongCount) {
-        mostWrongLetter = letter;
-        maxWrongCount = count;
-      }
-    });
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Hint'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (mispelledDetails.isNotEmpty)
-                Text('Details:\n$mispelledDetails', style: TextStyle(color: Colors.red))
-              else
-                Text('You have been wrong 3 times in a row'),
-              if (maxWrongCount > 0)
-                Text(
-                  'You have been wrong the most with the letter "$mostWrongLetter".',
-                  style: TextStyle(color: Colors.blue),
-                ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Close'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                  return AnotherPage();
-                }));
-              },
-              child: Text('Go to Help Page'),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   Future<void> speakCorrectWord() async {
     await flutterTts.setLanguage("id-ID");
@@ -412,16 +344,6 @@ class _SusunState extends State<modeEndless> {
           ),
         ],
       ),
-    );
-  }
-}
-
-class AnotherPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Help Page')),
-      body: Center(child: Text('This is the help page!')),
     );
   }
 }

@@ -1,8 +1,9 @@
+import 'package:dyslexiai/canvas/modeSelector.dart';
 import 'package:dyslexiai/susunkata/modeSelector.dart';
 import 'package:dyslexiai/training/trainingmain.dart';
 import 'package:flutter/material.dart';
 import 'package:dyslexiai/speechrecog.dart';
-import 'package:dyslexiai/canvas.dart';
+import 'package:dyslexiai/canvas/canvas.dart';
 
 
 void main() {
@@ -57,7 +58,7 @@ class HomePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const CanvasPage()),
+                  MaterialPageRoute(builder: (context) => Canvaslobi()),
                 );
               },
               child: Text('Canvas'),
