@@ -1,10 +1,15 @@
-import 'package:dyslexiai/susunkata/kataSelector.dart';
 import 'package:flutter/material.dart';
 import 'package:dyslexiai/susunkata/modePermainan/modeAdventure.dart';
 
-class Susunkatalevelselector extends StatelessWidget {
+class kataSelector extends StatelessWidget {
+  final String type;
+  kataSelector({super.key, required this.type});
+
+
   @override
   Widget build(BuildContext context) {
+    List<String> tipe = ambilKataSesuaiTipe(type);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Susunkatalobi'),
@@ -17,10 +22,10 @@ class Susunkatalevelselector extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => kataSelector(type: "Darat")),
+                  MaterialPageRoute(builder: (context) => Susunkata(correctWord: tipe[0])),
                 );
               },
-              child: Text('Hewan Darat'),
+              child: Text('Level 1'),
             ),
 
             SizedBox(height: 20),
@@ -29,10 +34,10 @@ class Susunkatalevelselector extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => kataSelector(type: "Laut",)),
+                  MaterialPageRoute(builder: (context) => Susunkata(correctWord: tipe[1])),
                 );
               },
-              child: Text('Hewan Laut'),
+              child: Text('Level 2'),
             ),
 
             SizedBox(height: 20),
@@ -41,10 +46,10 @@ class Susunkatalevelselector extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => kataSelector(type: "Udara",)),
+                  MaterialPageRoute(builder: (context) => Susunkata(correctWord: tipe[2])),
                 );
               },
-              child: Text('Hewan Udara'),
+              child: Text('Level 3'),
             ),
 
             SizedBox(height: 20),
@@ -55,4 +60,21 @@ class Susunkatalevelselector extends StatelessWidget {
       ),
     );
   }
+
+
+
 }
+
+
+List<String> ambilKataSesuaiTipe(String type) {
+  if (type == "Darat") {
+    return ["BEBEK","SAPI","KAMBING"];
+  } else if (type == "Laut") {
+    return ["HIU","BELUT","KEPITING"];
+  } else if (type == "Udara") {
+    return ["GAGAK", "MERPATI", "ELANG"];
+  }
+  else {return [];}
+}
+
+

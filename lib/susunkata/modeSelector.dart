@@ -1,7 +1,6 @@
 import 'package:dyslexiai/susunkata/levelSelector.dart';
 import 'package:flutter/material.dart';
-
-import 'modeEndless.dart';
+import 'package:dyslexiai/susunkata/modePermainan/modeEndless.dart';
 
 class Susunkatalobi extends StatelessWidget {
   @override
