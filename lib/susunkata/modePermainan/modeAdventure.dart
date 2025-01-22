@@ -2,6 +2,8 @@ import 'dart:math';
 import 'package:dyslexiai/training/trainingmain.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:dyslexiai/data/user.dart';
+
 
 class Susunkata extends StatefulWidget {
   final String correctWord;  // Add a constructor parameter
@@ -72,7 +74,7 @@ class _SusunState extends State<Susunkata> {
 
   int lives = 3; // Initial number of hearts
 
-  void checkWord() {
+  Future<void> checkWord() async {
     String word = blocks.map((block) => block?.split('-')[1] ?? '').join();
     List<bool> newCorrectPositions = List.generate(correctWord.length, (index) => false);
     String currentMispelledDetails = '';
@@ -82,6 +84,7 @@ class _SusunState extends State<Susunkata> {
         newCorrectPositions[i] = true;
       } else {
         String wrongLetter = blocks[i]?.split('-')[1] ?? '';
+        await GameData.updateMisspelledLetters({wrongLetter: 1});
         if (wrongLetter.isNotEmpty) {
           currentMispelledDetails += 'Mispelled $wrongLetter to ${correctWord[i]}\n';
           wrongLetterCounts[wrongLetter] = (wrongLetterCounts[wrongLetter] ?? 0) + 1;
