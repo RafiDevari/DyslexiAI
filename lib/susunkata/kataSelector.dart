@@ -1,3 +1,4 @@
+import 'package:dyslexiai/data/kataList.dart';
 import 'package:flutter/material.dart';
 import 'package:dyslexiai/susunkata/modePermainan/modeAdventure.dart';
 
@@ -60,19 +61,16 @@ class kataSelector extends StatelessWidget {
       ),
     );
   }
-
-
-
 }
 
 
 List<String> ambilKataSesuaiTipe(String type) {
   if (type == "Darat") {
-    return ["BEBEK","SAPI","KAMBING"];
+    return hewanDarat;
   } else if (type == "Laut") {
-    return ["HIU","BELUT","KEPITING"];
+    return hewanLaut;
   } else if (type == "Udara") {
-    return ["GAGAK", "MERPATI", "ELANG"];
+    return hewanUdara;
   }
   else {return [];}
 }

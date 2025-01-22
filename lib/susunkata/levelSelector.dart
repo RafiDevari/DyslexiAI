@@ -1,6 +1,5 @@
 import 'package:dyslexiai/susunkata/kataSelector.dart';
 import 'package:flutter/material.dart';
-import 'package:dyslexiai/susunkata/modePermainan/modeAdventure.dart';
 
 class Susunkatalevelselector extends StatelessWidget {
   @override

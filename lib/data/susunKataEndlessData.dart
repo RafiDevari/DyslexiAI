@@ -6,7 +6,10 @@ final List<String> wordList = [
   "BUKU", "LAPTOP", "TOPI", "GELAS", "SENDOK",
   "PIRING", "LEMARI", "BOLA", "KAOS", "TAS",
   "MOTOR", "DOMPET", "KUDA", "JERAPAH", "GAJAH",
-  "BANTAL", "KIPAS", "PISAU", "GUNTING", "LAMPU"
+  "BANTAL", "KIPAS", "PISAU", "GUNTING", "LAMPU",
+  "GAGAK", "MERPATI", "ELANG", "HIU", "BELUT",
+  "KEPITING", "BEBEK", "SAPI", "KAMBING", "KELINCI",
+  "KUDA", "KUMBANG",
 ];
 
 
