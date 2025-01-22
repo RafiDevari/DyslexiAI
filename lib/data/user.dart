@@ -33,6 +33,17 @@ class GameData {
     return misspelledLetters;
   }
 
+  static Future<List<MapEntry<String, int>>> getTopThreeMisspelled() async {
+    Map<String, int> misspelledData = await loadMisspelledLetters();
+
+    // Sort the map entries by descending count value
+    List<MapEntry<String, int>> sortedEntries = misspelledData.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    // Return the top 3 or less if there are not enough entries
+    return sortedEntries.take(3).toList();
+  }
+
   // Clear all misspelled letters data
   static Future<void> clearGameData() async {
     final prefs = await SharedPreferences.getInstance();

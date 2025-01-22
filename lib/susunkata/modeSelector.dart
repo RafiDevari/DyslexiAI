@@ -38,6 +38,10 @@ class _SusunkatalobiState extends State<Susunkatalobi> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Text("Total Kesalahan"),
+
+            SizedBox(height: 20),
+
             Text(
               misspelledData,  // Automatically display loaded data
               textAlign: TextAlign.center,

@@ -1,5 +1,6 @@
 
 
+
 final List<String> wordList = [
   "MEJA", "KURSI", "KUCING", "ANJING", "PINTU",
   "SEPEDA", "TELEVISI", "BURUNG", "IKAN", "MOBIL",
