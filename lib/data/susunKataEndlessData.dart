@@ -1,8 +1,10 @@
+import 'dart:math';
+import 'package:dyslexiai/data/user.dart';
 
 
 
 final List<String> wordList = [
-  "MEJA", "KURSI", "KUCING", "ANJING", "PINTU",
+  "MEJA", "KURSI", "KUCING", "PINTU",
   "SEPEDA", "TELEVISI", "BURUNG", "IKAN", "MOBIL",
   "BUKU", "LAPTOP", "TOPI", "GELAS", "SENDOK",
   "PIRING", "LEMARI", "BOLA", "KAOS", "TAS",
@@ -13,6 +15,36 @@ final List<String> wordList = [
   "KUDA", "KUMBANG",
 ];
 
+Future<List<String>> kataYangSeringSalah() async {
+  List<MapEntry<String, int>> top3Misspelled = await GameData.getTopThreeMisspelled();
+
+  // Extract the top 3 letters, e.g., ['A', 'B', 'C']
+  List<String> topLetters = top3Misspelled.map((e) => e.key).toList();
+
+  List<String> prioritizedWords = [];
+  Random random = Random();
+
+  for (String word in wordList) {
+    // Check if the word contains any of the top 3 letters
+    bool containsTopLetter = topLetters.any((letter) => word.contains(letter));
+
+    if (containsTopLetter) {
+      // Add words containing top letters multiple times (weighted probability)
+      int frequency = 3 + random.nextInt(3);  // Add 3-5 times
+      for (int i = 0; i < frequency; i++) {
+        prioritizedWords.add(word);
+      }
+    } else {
+      // Add normal words with lower frequency
+      prioritizedWords.add(word);
+    }
+  }
+
+  // Shuffle the final list to randomize word order
+  prioritizedWords.shuffle();
+
+  return prioritizedWords;
+}
 
 
 final Map<String, List<String>> letterRules = {
