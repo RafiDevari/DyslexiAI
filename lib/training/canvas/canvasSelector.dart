@@ -1,9 +1,7 @@
 import 'package:dyslexiai/training/canvas/trainingCanvas.dart';
 import 'package:flutter/material.dart';
 
-import 'canvas/canvasSelector.dart';
-
-class TrainingMain extends StatelessWidget {
+class CanvasSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +16,7 @@ class TrainingMain extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CanvasSelector()),
+                  MaterialPageRoute(builder: (context) => TrainingCanvas(huruf:"A")),
                 );
               },
               child: Text('Latihan Nulis'),
@@ -28,11 +26,29 @@ class TrainingMain extends StatelessWidget {
 
             ElevatedButton(
               onPressed: () {
-                // Define the action for the second button
-                print('Second button pressed');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => TrainingCanvas(huruf:"B")),
+                );
               },
-              child: Text('Button 2'),
+              child: Text('Latihan Nulis'),
             ),
+
+            SizedBox(height: 20),
+
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => TrainingCanvas(huruf:"S")),
+                );
+              },
+              child: Text('Latihan Nulis'),
+            ),
+
+            SizedBox(height: 20),
+
+
           ],
         ),
       ),
