@@ -60,10 +60,16 @@ Future<List<String>> kataYangSeringSalah() async {
 
 
 final Map<String, List<String>> letterRules = {
-  'P': ['D', 'B'],
-  'B': ['D'],
-  'D': ['B'],
+  'P': ['D', 'B', 'R'],
+  'B': ['D','P','R'],
+  'D': ['B','O','C'],
   'C': ['O','D','Q'],
   'O': ['C','Q','D'],
-  'R': ['P','B','B']
+  'R': ['P','B','B'],
+  'W': ['V','U'],
+  'V': ['W','U'],
+  'U': ['V','W'],
+  'I': ['Y','J','L'],
+  'Y': ['I','J'],
+  'J': ['I','Y'],
 };
