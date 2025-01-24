@@ -32,7 +32,7 @@ class _SusunkatalobiState extends State<Susunkatalobi> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Susunkatalobi'),
+        title: Text('Susun Kata'),
       ),
       body: Center(
         child: Column(

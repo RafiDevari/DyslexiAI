@@ -245,7 +245,7 @@ class _SusunState extends State<Susunkata> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Word Game'),
+        title: Text('Adventure Mode'),
         actions: [
           Row(
             children: List.generate(3, (index) {

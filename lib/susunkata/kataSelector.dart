@@ -13,7 +13,7 @@ class kataSelector extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Susunkatalobi'),
+        title: Text('Petualangan ' + type),
       ),
       body: Center(
         child: Column(

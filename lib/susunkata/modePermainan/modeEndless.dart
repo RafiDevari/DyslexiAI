@@ -181,7 +181,7 @@ class _SusunState extends State<modeEndless> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Word Game'),
+        title: Text('Mode Tanpa Batas'),
         actions: [
           Text('Score: $score', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
 

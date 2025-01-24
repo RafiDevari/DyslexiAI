@@ -12,7 +12,7 @@ class Susunkatalevelselector extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Susunkatalobi'),
+        title: Text('Mode Petualangan'),
       ),
       body: Center(
         child: Container(
