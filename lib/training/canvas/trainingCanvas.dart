@@ -1,3 +1,4 @@
+import 'package:dyslexiai/data/guidelineHuruf.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
@@ -18,7 +19,7 @@ class _TrainingCanvasState extends State<TrainingCanvas> {
   @override
   void initState() {
     super.initState();
-    _guidePath = _generateGuidePath();
+    _guidePath = generateLetterPath(widget.huruf);
   }
 
   @override
@@ -83,21 +84,21 @@ class _TrainingCanvasState extends State<TrainingCanvas> {
   // Ensure drawing stays inside the lower half of the screen
   bool _isWithinBounds(Offset position) {
     return position.dy >= 0 &&
-        position.dy <= 300 &&  // Assuming bottom half height
+        position.dy <= 500 &&  // Assuming bottom half height
         position.dx >= 0 &&
         position.dx <= 400; // Assuming screen width
   }
 
   // Generate guide path for letter A (You can modify this for other letters)
-  Path _generateGuidePath() {
-    Path path = Path();
-    path.moveTo(100, 250);
-    path.lineTo(200, 50);
-    path.lineTo(300, 250);
-    path.moveTo(150, 150);
-    path.lineTo(250, 150);
-    return path;
-  }
+  // Path _generateGuidePath() {
+  //   Path path = Path();
+  //   path.moveTo(100, 250);
+  //   path.lineTo(200, 50);
+  //   path.lineTo(300, 250);
+  //   path.moveTo(150, 150);
+  //   path.lineTo(250, 150);
+  //   return path;
+  // }
 
   // Check if the drawing sufficiently covers the guide path
   void _checkCompletion() {
@@ -138,7 +139,7 @@ class _TrainingCanvasState extends State<TrainingCanvas> {
     print("Completion Percentage: $completionPercentage%");
 
     // Trigger completion when 80% of the path is covered
-    if (completionPercentage >= 100 && !isDrawingComplete) {
+    if (completionPercentage >= 95 && !isDrawingComplete) {
       setState(() {
         isDrawingComplete = true;
       });
