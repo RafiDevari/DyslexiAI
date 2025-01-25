@@ -8,50 +8,50 @@ class CanvasSelector extends StatelessWidget {
       appBar: AppBar(
         title: Text('Training Camp'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TrainingCanvas(huruf:"A")),
-                );
-              },
-              child: Text('Latihan Nulis'),
-            ),
-
-            SizedBox(height: 20),
-
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TrainingCanvas(huruf:"B")),
-                );
-              },
-              child: Text('Latihan Nulis'),
-            ),
-
-            SizedBox(height: 20),
-
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TrainingCanvas(huruf:"S")),
-                );
-              },
-              child: Text('Latihan Nulis'),
-            ),
-
-            SizedBox(height: 20),
-
-
-          ],
+      body:
+      Center(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: List.generate(26, (index) {
+              String letter = String.fromCharCode(65 + index); // Convert ASCII to A-Z
+              return Column(
+                children: [
+                  LetterButton(letter: letter),
+                  SizedBox(height: 20),
+                ],
+              );
+            }),
+          ),
         ),
-      ),
+      )
+    );
+  }
+}
+
+
+
+class LetterButton extends StatelessWidget {
+  final String letter;
+
+  const LetterButton({Key? key, required this.letter}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => TrainingCanvas(huruf: letter)),
+            );
+          },
+          child: Text('Latihan Nulis $letter'),
+        ),
+        SizedBox(height: 20),
+      ],
     );
   }
 }
