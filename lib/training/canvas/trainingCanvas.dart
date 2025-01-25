@@ -2,6 +2,8 @@ import 'package:dyslexiai/data/guidelineHuruf.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
+import 'package:flutter_tts/flutter_tts.dart';
+
 
 class TrainingCanvas extends StatefulWidget {
   final String huruf;
@@ -15,6 +17,7 @@ class _TrainingCanvasState extends State<TrainingCanvas> {
   List<Offset?> _points = [];
   late Path _guidePath;
   bool isDrawingComplete = false;
+  final FlutterTts flutterTts = FlutterTts();
 
   @override
   void initState() {
@@ -30,15 +33,23 @@ class _TrainingCanvasState extends State<TrainingCanvas> {
         children: [
           Expanded(
             child: Center(
-              child: Text(
-                widget.huruf,
-                style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width * 0.4,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey.withOpacity(0.5),
+              child:
+              GestureDetector(
+                onTap: () {
+                  speakCorrectWord();
+                },
+                child: Text(
+                  widget.huruf,
+                  style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width * 0.4,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey.withOpacity(0.5),
+                  ),
                 ),
               ),
+
             ),
+
           ),
           Expanded(
             child: Container(
@@ -147,7 +158,11 @@ class _TrainingCanvasState extends State<TrainingCanvas> {
     }
   }
 
-
+  Future<void> speakCorrectWord() async {
+    await flutterTts.setLanguage("id-ID");
+    await flutterTts.setSpeechRate(0.5);
+    await flutterTts.speak(widget.huruf);
+  }
 
   // Check if drawn points are near the guide path
   bool _isPointNearPath(Offset point) {
