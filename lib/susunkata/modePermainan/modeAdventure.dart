@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:dyslexiai/training/canvas/trainingCanvas.dart';
 import 'package:dyslexiai/training/trainingmain.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -86,7 +87,7 @@ class _SusunState extends State<Susunkata> {
         String wrongLetter = blocks[i]?.split('-')[1] ?? '';
         await GameData.updateMisspelledLetters({wrongLetter: 1});
         if (wrongLetter.isNotEmpty) {
-          currentMispelledDetails += 'Mispelled $wrongLetter to ${correctWord[i]}\n';
+          currentMispelledDetails += 'Mispelled ${correctWord[i]} to $wrongLetter\n';
           wrongLetterCounts[wrongLetter] = (wrongLetterCounts[wrongLetter] ?? 0) + 1;
         }
       }
@@ -156,7 +157,7 @@ class _SusunState extends State<Susunkata> {
               onPressed: () {
                 Navigator.of(context).pop();  // Close the dialog
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => TrainingMain()),
+                  MaterialPageRoute(builder: (context) => TrainingCanvas(huruf: correctWord[0])),
                 );
               },
               child: Text('Go to Training'),

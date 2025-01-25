@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:dyslexiai/training/canvas/trainingCanvas.dart';
 import 'package:dyslexiai/training/trainingmain.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -144,7 +145,7 @@ class _SusunState extends State<modeEndless> {
               onPressed: () {
                 Navigator.of(context).pop();  // Close the dialog
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => TrainingMain()),
+                  MaterialPageRoute(builder: (context) => TrainingCanvas(huruf: correctWord[0])),
                 );
               },
               child: Text('Go to Training'),
