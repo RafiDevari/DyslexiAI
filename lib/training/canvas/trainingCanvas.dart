@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:ui' as ui;
+
 
 class TrainingCanvas extends StatefulWidget {
   final String huruf;
@@ -10,63 +12,61 @@ class TrainingCanvas extends StatefulWidget {
 
 class _TrainingCanvasState extends State<TrainingCanvas> {
   List<Offset?> _points = [];
-  late double drawingTopBoundary;
+  late Path _guidePath;
   bool isDrawingComplete = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _guidePath = _generateGuidePath();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Training Camp')),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          drawingTopBoundary = constraints.maxHeight / 2;
-
-          return Column(
-            children: [
-              // Top half to display the letter
-              Expanded(
-                child: Center(
-                  child: Text(
-                    widget.huruf,
-                    style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width * 0.4,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey.withOpacity(0.5),
-                    ),
-                  ),
+      body: Column(
+        children: [
+          Expanded(
+            child: Center(
+              child: Text(
+                widget.huruf,
+                style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width * 0.4,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey.withOpacity(0.5),
                 ),
               ),
-              // Bottom half with border and drawing area
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black, width: 2.0),
-                  ),
-                  child: GestureDetector(
-                    onPanUpdate: (details) {
-                      final localPosition = details.localPosition;
-                      if (_isWithinBounds(localPosition, constraints)) {
-                        setState(() {
-                          _points.add(localPosition);
-                          _checkCompletion();
-                        });
-                      }
-                    },
-                    onPanEnd: (details) {
-                      setState(() {
-                        _points.add(null);
-                      });
-                    },
-                    child: CustomPaint(
-                      painter: DrawingPainter(_points, widget.huruf),
-                      size: Size.infinite,
-                    ),
-                  ),
+            ),
+          ),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black, width: 2.0),
+              ),
+              child: GestureDetector(
+                onPanUpdate: (details) {
+                  final localPosition = details.localPosition;
+                  if (_isWithinBounds(localPosition)) {
+                    setState(() {
+                      _points.add(localPosition);
+                      _checkCompletion();
+                    });
+                  }
+                },
+                onPanEnd: (details) {
+                  setState(() {
+                    _points.add(null);
+                  });
+                },
+                child: CustomPaint(
+                  painter: DrawingPainter(_points, _guidePath),
+                  size: Size.infinite,
                 ),
               ),
-            ],
-          );
-        },
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -81,22 +81,64 @@ class _TrainingCanvasState extends State<TrainingCanvas> {
   }
 
   // Ensure drawing stays inside the lower half of the screen
-  bool _isWithinBounds(Offset position, BoxConstraints constraints) {
+  bool _isWithinBounds(Offset position) {
     return position.dy >= 0 &&
-        position.dy <= constraints.maxHeight / 2 &&
+        position.dy <= 300 &&  // Assuming bottom half height
         position.dx >= 0 &&
-        position.dx <= constraints.maxWidth;
+        position.dx <= 400; // Assuming screen width
   }
 
-  // Check if the drawing sufficiently covers the guide
-  void _checkCompletion() {
-    double coverageThreshold = 0.75; // Percentage of guide to be covered
-    int matchingPoints = _points.where((point) {
-      if (point == null) return false;
-      return _isPointOnGuide(point);
-    }).length;
+  // Generate guide path for letter A (You can modify this for other letters)
+  Path _generateGuidePath() {
+    Path path = Path();
+    path.moveTo(100, 250);
+    path.lineTo(200, 50);
+    path.lineTo(300, 250);
+    path.moveTo(150, 150);
+    path.lineTo(250, 150);
+    return path;
+  }
 
-    if (matchingPoints / _points.length > coverageThreshold) {
+  // Check if the drawing sufficiently covers the guide path
+  void _checkCompletion() {
+    // Count how many guide path points are covered by the user's drawing
+    int coveredPoints = 0;
+    int totalGuidePoints = 0;
+    Set<Offset> checkedPoints = Set(); // To track already checked points for optimization
+
+    // Ensure the user has drawn a sufficient number of points
+    if (_points.length < 20) {
+      print("Not enough points drawn yet.");
+      return; // Don't check completion if the user hasn't drawn enough
+    }
+
+    // Iterate over the guide path to get the points and check if the drawn points are near
+    for (ui.PathMetric metric in _guidePath.computeMetrics()) {
+      for (double i = 0.0; i < metric.length; i += 10.0) {
+        Offset guidePoint = metric.getTangentForOffset(i)!.position;
+        totalGuidePoints++;
+
+        // Only check if the point hasn't been checked yet
+        if (!checkedPoints.contains(guidePoint)) {
+          checkedPoints.add(guidePoint);
+
+          // Check if any of the drawn points are close enough to the guide point
+          for (Offset? point in _points) {
+            if (point != null && (point - guidePoint).distance < 20) { // 20 pixels threshold
+              coveredPoints++;
+              break; // No need to check more points for this guide point
+            }
+          }
+        }
+      }
+    }
+
+    // Calculate percentage of completion
+    double completionPercentage = (coveredPoints / totalGuidePoints) * 100;
+    print("Completion Percentage: $completionPercentage%");
+
+    // Trigger completion when 80% of the path is covered
+    if (completionPercentage >= 100 && !isDrawingComplete) {
       setState(() {
         isDrawingComplete = true;
       });
@@ -104,13 +146,22 @@ class _TrainingCanvasState extends State<TrainingCanvas> {
     }
   }
 
-  // Detect if the drawn point matches the guide area (simplified detection)
-  bool _isPointOnGuide(Offset point) {
-    double guideTolerance = 20.0;
-    return (point.dx - 100).abs() < guideTolerance && (point.dy - 150).abs() < guideTolerance;
+
+
+  // Check if drawn points are near the guide path
+  bool _isPointNearPath(Offset point) {
+    for (ui.PathMetric metric in _guidePath.computeMetrics()) {
+      for (double i = 0.0; i < metric.length; i += 10.0) {
+        Offset pos = metric.getTangentForOffset(i)!.position;
+        if ((pos - point).distance < 20) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
-  // Show a congratulations pop-up when the drawing is completed
+  // Show a congratulations pop-up
   void _showCongratulations() {
     showDialog(
       context: context,
@@ -130,9 +181,9 @@ class _TrainingCanvasState extends State<TrainingCanvas> {
 
 class DrawingPainter extends CustomPainter {
   final List<Offset?> points;
-  final String huruf;
+  final Path guidePath;
 
-  DrawingPainter(this.points, this.huruf);
+  DrawingPainter(this.points, this.guidePath);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -148,39 +199,13 @@ class DrawingPainter extends CustomPainter {
       }
     }
 
-    // Draw guide letter softly in the background
+    // Draw guide path softly in the background
     final guidePaint = Paint()
       ..color = Colors.grey.withOpacity(0.3)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3.0;
 
-    final textPainter = TextPainter(
-      text: TextSpan(
-        text: huruf,
-        style: TextStyle(
-          fontSize: size.width * 0.5,
-          fontWeight: FontWeight.bold,
-          color: Colors.grey.withOpacity(0.3),
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    );
-
-    textPainter.layout();
-    final offsetX = (size.width - textPainter.width) / 2;
-    final offsetY = (size.height - textPainter.height) / 2;
-    textPainter.paint(canvas, Offset(offsetX, offsetY));
-
-    // Drawing guide lines (A shape example)
-    Path path = Path();
-    if (huruf.toUpperCase() == 'A') {
-      path.moveTo(size.width * 0.3, size.height * 0.8);
-      path.lineTo(size.width * 0.5, size.height * 0.2);
-      path.lineTo(size.width * 0.7, size.height * 0.8);
-      path.moveTo(size.width * 0.4, size.height * 0.5);
-      path.lineTo(size.width * 0.6, size.height * 0.5);
-    }
-    canvas.drawPath(path, guidePaint);
+    canvas.drawPath(guidePath, guidePaint);
   }
 
   @override
