@@ -15,23 +15,23 @@ Path generateLetterPath(String huruf) {
       break;
 
     case 'B':
-      path.moveTo(100, 50);
+      path.moveTo(100, 100);
       path.lineTo(100, 350);
       path.moveTo(100, 100);
       path.arcToPoint(Offset(100, 200), radius: Radius.circular(50), clockwise: true);
       path.moveTo(100, 200);
-      path.arcToPoint(Offset(100, 300), radius: Radius.circular(50), clockwise: true);
+      path.arcToPoint(Offset(100, 350), radius: Radius.circular(50), clockwise: true);
       break;
 
     case 'C':
-      path.moveTo(250, 100);
-      path.arcToPoint(Offset(150, 300), radius: Radius.circular(150), clockwise: false);
+      path.moveTo(150, 100);
+      path.arcToPoint(Offset(150, 300), radius: Radius.circular(45), clockwise: false);
       break;
 
     case 'D':
       path.moveTo(100, 50);
       path.lineTo(100, 350);
-      path.arcToPoint(Offset(100, 50), radius: Radius.circular(150), clockwise: true);
+      path.arcToPoint(Offset(100, 50), radius: Radius.circular(150), clockwise: false);
       break;
 
     case 'E':

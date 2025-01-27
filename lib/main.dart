@@ -1,4 +1,5 @@
 import 'package:dyslexiai/canvas/modeSelector.dart';
+import 'package:dyslexiai/chatbot/chatbot.dart';
 import 'package:dyslexiai/susunkata/modeSelector.dart';
 import 'package:dyslexiai/training/trainingmain.dart';
 import 'package:flutter/material.dart';
@@ -30,52 +31,74 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Home Page')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ElevatedButton(
+      body: Stack(
+        children: [
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => TrainingMain()),
+                    );
+                  },
+                  child: Text('Training camp'),
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SpeechToTextPage()),
+                    );
+                  },
+                  child: Text('ini speech to text'),
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Canvaslobi()),
+                    );
+                  },
+                  child: Text('Canvas'),
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Susunkatalobi()),
+                    );
+                  },
+                  child: Text('SusunKata'),
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            top: 20, // Distance from the top
+            right: 20, // Distance from the right
+            child:
+            FloatingActionButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => TrainingMain()),
+                  MaterialPageRoute(builder: (context) => Chatbot()),
                 );
               },
-              child: Text('Training camp'),
+              backgroundColor: Colors.blue,
+              child: Image.asset(
+                'assets/logo.jpeg'
+              ),
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SpeechToTextPage()),
-                );
-              },
-              child: Text('ini speech to text'),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Canvaslobi()),
-                );
-              },
-              child: Text('Canvas'),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Susunkatalobi()),
-                );
-              },
-              child: Text('SusunKata'),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
+
