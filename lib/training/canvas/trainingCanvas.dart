@@ -18,6 +18,8 @@ class _TrainingCanvasState extends State<TrainingCanvas> {
   late Path _guidePath;
   bool isDrawingComplete = false;
   final FlutterTts flutterTts = FlutterTts();
+  late double completionPercentage=0.0;
+
 
   @override
   void initState() {
@@ -33,22 +35,27 @@ class _TrainingCanvasState extends State<TrainingCanvas> {
         children: [
           Expanded(
             child: Center(
-              child:
-              GestureDetector(
-                onTap: () {
-                  speakCorrectWord();
-                },
-                child: Text(
-                  widget.huruf,
-                  style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.width * 0.4,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey.withOpacity(0.5),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center, // Center vertically
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      speakCorrectWord();
+                    },
+                    child: Text(
+                      widget.huruf,
+                      style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.4,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey.withOpacity(0.5),
+                      ),
+                    ),
                   ),
-                ),
+                  Text("Completion: ${completionPercentage.toStringAsFixed(1)}%"),
+                ],
               ),
-
             ),
+
 
           ),
           Expanded(
@@ -136,7 +143,7 @@ class _TrainingCanvasState extends State<TrainingCanvas> {
 
           // Check if any of the drawn points are close enough to the guide point
           for (Offset? point in _points) {
-            if (point != null && (point - guidePoint).distance < 20) { // 20 pixels threshold
+            if (point != null && (point - guidePoint).distance < 7.5) { // 20 pixels threshold
               coveredPoints++;
               break; // No need to check more points for this guide point
             }
@@ -146,7 +153,7 @@ class _TrainingCanvasState extends State<TrainingCanvas> {
     }
 
     // Calculate percentage of completion
-    double completionPercentage = (coveredPoints / totalGuidePoints) * 100;
+    completionPercentage = (coveredPoints / totalGuidePoints) * 100;
     print("Completion Percentage: $completionPercentage%");
 
     // Trigger completion when 80% of the path is covered
@@ -206,7 +213,7 @@ class DrawingPainter extends CustomPainter {
     final paint = Paint()
       ..color = Colors.black
       ..strokeCap = StrokeCap.round
-      ..strokeWidth = 4.0;
+      ..strokeWidth = 3.0;
 
     // Draw user's strokes
     for (int i = 0; i < points.length - 1; i++) {
