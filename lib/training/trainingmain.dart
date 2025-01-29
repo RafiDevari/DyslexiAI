@@ -1,4 +1,7 @@
+import 'package:dyslexiai/training/canvas/trainingCanvas.dart';
 import 'package:flutter/material.dart';
+
+import 'canvas/canvasSelector.dart';
 
 class TrainingMain extends StatelessWidget {
   @override
@@ -13,12 +16,12 @@ class TrainingMain extends StatelessWidget {
           children: [
             ElevatedButton(
               onPressed: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => Susunkata()),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CanvasSelector()),
+                );
               },
-              child: Text('Training 1'),
+              child: Text('Latihan Nulis'),
             ),
 
             SizedBox(height: 20),

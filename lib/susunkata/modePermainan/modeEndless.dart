@@ -1,8 +1,11 @@
 import 'dart:math';
+import 'package:dyslexiai/training/canvas/trainingCanvas.dart';
 import 'package:dyslexiai/training/trainingmain.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:dyslexiai/data/susunKataEndlessData.dart';
+import 'package:dyslexiai/data/user.dart';
+
 
 class modeEndless extends StatefulWidget {
   final int health;// Add a constructor parameter
@@ -72,7 +75,7 @@ class _SusunState extends State<modeEndless> {
 
    // Initial number of hearts
 
-  void checkWord() {
+  Future<void> checkWord() async {
     String word = blocks.map((block) => block?.split('-')[1] ?? '').join();
     List<bool> newCorrectPositions = List.generate(correctWord.length, (index) => false);
     String currentMispelledDetails = '';
@@ -82,6 +85,7 @@ class _SusunState extends State<modeEndless> {
         newCorrectPositions[i] = true;
       } else {
         String wrongLetter = blocks[i]?.split('-')[1] ?? '';
+        await GameData.updateMisspelledLetters({wrongLetter: 1});
         if (wrongLetter.isNotEmpty) {
           currentMispelledDetails += '\nMispelled ${correctWord[i] } to $wrongLetter';
           wrongLetterCounts[wrongLetter] = (wrongLetterCounts[wrongLetter] ?? 0) + 1;
@@ -141,7 +145,7 @@ class _SusunState extends State<modeEndless> {
               onPressed: () {
                 Navigator.of(context).pop();  // Close the dialog
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => TrainingMain()),
+                  MaterialPageRoute(builder: (context) => TrainingCanvas(huruf: correctWord[0])),
                 );
               },
               child: Text('Go to Training'),
@@ -178,7 +182,7 @@ class _SusunState extends State<modeEndless> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Word Game'),
+        title: Text('Mode Tanpa Batas'),
         actions: [
           Text('Score: $score', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
 
@@ -208,8 +212,8 @@ class _SusunState extends State<modeEndless> {
             onTap: speakCorrectWord,
             child: Image.asset(
               'assets/speaker_icon.png',
-              width: 50,
-              height: 50,
+              width: 100,
+              height: 100,
             ),
           ),
           SizedBox(height: 10),
