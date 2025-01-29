@@ -3,7 +3,9 @@ import 'package:dyslexiai/chatbot/chatbot.dart';
 import 'package:dyslexiai/susunkata/modeSelector.dart';
 import 'package:dyslexiai/training/trainingmain.dart';
 import 'package:flutter/material.dart';
-import 'package:dyslexiai/speechrecog.dart';  // Add your ProfilePage import here
+import 'package:dyslexiai/speechrecog.dart';
+
+import 'data/user.dart';  // Add your ProfilePage import here
 
 void main() {
   runApp(MyApp());
@@ -22,7 +24,33 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+
+class _HomePageState extends State<HomePage> {
+  String? _username;
+  int _experience = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  // Load the username and experience data
+  void _loadUserData() async {
+    String? username = await GameData.getUsername();
+    int experience = await GameData.getExperience();
+
+    setState(() {
+      _username = username;
+      _experience = experience;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,9 +70,9 @@ class HomePage extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('User Name', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),  // Replace with dynamic data
+                    Text(_username ?? 'User Name', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),  // Replace with dynamic data
                     SizedBox(height: 5),
-                    Text('Experience: 120 XP', style: TextStyle(fontSize: 14)),  // Replace with dynamic data
+                    Text('Experience: $_experience XP', style: TextStyle(fontSize: 14)),  // Replace with dynamic data
                   ],
                 ),
               ],

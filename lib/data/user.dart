@@ -50,5 +50,40 @@ class GameData {
     for (String letter in List.generate(26, (index) => String.fromCharCode(index + 65))) {
       await prefs.remove('misspelled_$letter');
     }
+
+    // Also clear username and experience data
+    await prefs.remove('username');
+    await prefs.remove('experience');
+  }
+
+  // Set the username
+  static Future<void> setUsername(String username) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('username', username);
+  }
+
+  // Get the username
+  static Future<String?> getUsername() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('username');
+  }
+
+  // Set the experience points (exp)
+  static Future<void> setExperience(int exp) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('experience', exp);
+  }
+
+  // Get the experience points (exp)
+  static Future<int> getExperience() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('experience') ?? 0;  // Default to 0 if not set
+  }
+
+  // Update experience points by a given amount (e.g., increase or decrease)
+  static Future<void> updateExperience(int delta) async {
+    final currentExp = await getExperience();
+    final newExp = currentExp + delta;
+    await setExperience(newExp);
   }
 }
