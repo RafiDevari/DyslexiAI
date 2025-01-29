@@ -31,74 +31,73 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Home Page')),
-      body: Stack(
-        children: [
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => TrainingMain()),
-                    );
-                  },
-                  child: Text('Training camp'),
-                ),
-                SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const SpeechToTextPage()),
-                    );
-                  },
-                  child: Text('ini speech to text'),
-                ),
-                SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Canvaslobi()),
-                    );
-                  },
-                  child: Text('Canvas'),
-                ),
-                SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Susunkatalobi()),
-                    );
-                  },
-                  child: Text('SusunKata'),
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            top: 20, // Distance from the top
-            right: 20, // Distance from the right
-            child:
-            FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Chatbot()),
-                );
-              },
-              backgroundColor: Colors.blue,
-              child: Image.asset(
-                'assets/logo.jpeg'
+      body: Container(
+        color: Color(0xFFFDFCDC), // Change background color here
+        child: Stack(
+          children: [
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => TrainingMain()),
+                      );
+                    },
+                    child: Text('Training camp'),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const SpeechToTextPage()),
+                      );
+                    },
+                    child: Text('ini speech to text'),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Canvaslobi()),
+                      );
+                    },
+                    child: Text('Canvas'),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Susunkatalobi()),
+                      );
+                    },
+                    child: Text('SusunKata'),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+            Positioned(
+              top: 20, // Distance from the top
+              right: 20, // Distance from the right
+              child: FloatingActionButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Chatbot()),
+                  );
+                },
+                backgroundColor: Colors.blue,
+                child: Image.asset('assets/logo.jpeg'),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
-
