@@ -9,7 +9,7 @@ class Susunkatalobi extends StatefulWidget {
 }
 
 class _SusunkatalobiState extends State<Susunkatalobi> {
-  String misspelledData = "Loading...";
+  String misspelledData = "Loading..";
 
   @override
   void initState() {
