@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dyslexiai/canvas/modeSelector.dart';
 import 'package:dyslexiai/chatbot/chatbot.dart';
 import 'package:dyslexiai/susunkata/modeSelector.dart';
@@ -38,6 +40,13 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _loadUserData();
+    _startUserDataListener();
+  }
+
+  void _startUserDataListener() {
+    Timer.periodic(Duration(seconds: 5), (timer) {
+      _loadUserData();
+    });
   }
 
   // Load the username and experience data
