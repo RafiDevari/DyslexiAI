@@ -16,6 +16,9 @@ class _ChatbotState extends State<Chatbot> {
   final String apiUrl =
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=";
 
+  // Scroll controller for automatic scrolling
+  ScrollController _scrollController = ScrollController();
+
   // Function to send the user's input to the bot and fetch its response
   Future<void> generateResponse() async {
     if (userInput.isEmpty) return;
@@ -24,6 +27,9 @@ class _ChatbotState extends State<Chatbot> {
     setState(() {
       messages.add({"sender": "user", "message": userInput});
     });
+
+    // Scroll to the bottom after adding the user's message
+    _scrollToBottom();
 
     try {
       final response = await http.post(
@@ -50,6 +56,9 @@ class _ChatbotState extends State<Chatbot> {
         setState(() {
           messages.add({"sender": "bot", "message": botResponse});
         });
+
+        // Scroll to the bottom after the bot's message
+        _scrollToBottom();
       } else {
         setState(() {
           messages.add({"sender": "bot", "message": "API Error: ${response.statusCode}"});
@@ -59,7 +68,19 @@ class _ChatbotState extends State<Chatbot> {
       setState(() {
         messages.add({"sender": "bot", "message": "Error: $e"});
       });
+
+      // Scroll to the bottom if there's an error as well
+      _scrollToBottom();
     }
+  }
+
+  // Function to scroll to the bottom of the ListView
+  void _scrollToBottom() {
+    Future.delayed(Duration(milliseconds: 100), () {
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      }
+    });
   }
 
   @override
@@ -71,7 +92,7 @@ class _ChatbotState extends State<Chatbot> {
           // Display the chat messages
           Expanded(
             child: ListView.builder(
-              reverse: true, // Start from the bottom
+              controller: _scrollController, // Controller added here
               itemCount: messages.length,
               itemBuilder: (context, index) {
                 String sender = messages[index]["sender"] ?? "";
