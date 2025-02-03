@@ -45,7 +45,7 @@ class _ChatbotState extends State<Chatbot> {
             {
               "parts": [
                 {
-                  "text": "Kamu adalah Beemo, asisten AI yang ramah. "
+                  "text": "Kamu adalah Beemo, asisten AI yang ramah untuk anak anak. "
                       "Kamu suka membantu pengguna, bercanda, dan memberikan saran. "
                       "Berbicaralah dengan santai, ceria, dan menarik!, tetapi text mu tidak boleh panjang panjang karena user bakal bosan\n\n"
                       "Percakapan sejauh ini:\n"
@@ -129,6 +129,7 @@ class _ChatbotState extends State<Chatbot> {
   // Stop listening
   void _stopListening() {
     _speech.stop();
+    _isListening = false;
     setState(() {
       _isListening = false;
     });
