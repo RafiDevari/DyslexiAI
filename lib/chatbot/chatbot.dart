@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class Chatbot extends StatefulWidget {
   const Chatbot({super.key});
@@ -19,16 +20,20 @@ class _ChatbotState extends State<Chatbot> {
   // Scroll controller for automatic scrolling
   ScrollController _scrollController = ScrollController();
 
+  // Speech recognition object
+  stt.SpeechToText _speech = stt.SpeechToText();
+
+  bool _isListening = false;
+
   // Function to send the user's input to the bot and fetch its response
   Future<void> generateResponse() async {
     if (userInput.isEmpty) return;
 
-    // Add user message to the chat
+    // Add user message to chat history
     setState(() {
       messages.add({"sender": "user", "message": userInput});
     });
 
-    // Scroll to the bottom after adding the user's message
     _scrollToBottom();
 
     try {
@@ -40,7 +45,12 @@ class _ChatbotState extends State<Chatbot> {
             {
               "parts": [
                 {
-                  "text": userInput
+                  "text": "Kamu adalah Beemo, asisten AI yang ramah. "
+                      "Kamu suka membantu pengguna, bercanda, dan memberikan saran. "
+                      "Berbicaralah dengan santai, ceria, dan menarik!, tetapi text mu tidak boleh panjang panjang karena user bakal bosan\n\n"
+                      "Percakapan sejauh ini:\n"
+                      "${_buildConversationHistory()}\n"
+                      "Pengguna: $userInput"
                 }
               ]
             }
@@ -50,29 +60,41 @@ class _ChatbotState extends State<Chatbot> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        String botResponse = data["candidates"][0]["content"]["parts"][0]["text"] ?? "Error generating response";
+        String botResponse = data["candidates"][0]["content"]["parts"][0]["text"] ?? "Oops! Beemo got confused! 😵";
 
-        // Add bot's message to the chat
+        // Add Beemo's response to chat
         setState(() {
-          messages.add({"sender": "bot", "message": botResponse});
+          messages.add({"sender": "beemo", "message": botResponse});
         });
 
-        // Scroll to the bottom after the bot's message
         _scrollToBottom();
       } else {
+        print("API Error Response: ${response.body}");
         setState(() {
-          messages.add({"sender": "bot", "message": "API Error: ${response.statusCode}"});
+          messages.add({"sender": "beemo", "message": "API Error: ${response.statusCode} - ${response.body}"});
         });
       }
     } catch (e) {
       setState(() {
-        messages.add({"sender": "bot", "message": "Error: $e"});
+        messages.add({"sender": "beemo", "message": "Oops! Beemo encountered an error: $e"});
       });
-
-      // Scroll to the bottom if there's an error as well
-      _scrollToBottom();
     }
+
+    _scrollToBottom();
   }
+
+
+
+  String _buildConversationHistory() {
+    String history = "";
+    for (var msg in messages) {
+      // Change "bot" to "Beemo" in history
+      String sender = msg['sender'] == "bot" ? "Beemo" : "User";
+      history += "$sender: ${msg['message']}\n";
+    }
+    return history + "User: $userInput"; // Append new message
+  }
+
 
   // Function to scroll to the bottom of the ListView
   void _scrollToBottom() {
@@ -80,6 +102,35 @@ class _ChatbotState extends State<Chatbot> {
       if (_scrollController.hasClients) {
         _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
       }
+    });
+  }
+
+  // Start listening to user's voice
+  void _startListening() async {
+    bool available = await _speech.initialize();
+    if (available) {
+      setState(() {
+        _isListening = true;
+      });
+      _speech.listen(
+        onResult: (result) {
+          setState(() {
+            userInput = result.recognizedWords;
+          });
+          if (result.hasConfidenceRating && result.confidence > 0.5) {
+            generateResponse(); // Call the function to send the message after the voice input is recognized
+          }
+        },
+        localeId: "id_ID",
+      );
+    }
+  }
+
+  // Stop listening
+  void _stopListening() {
+    _speech.stop();
+    setState(() {
+      _isListening = false;
     });
   }
 
@@ -118,31 +169,24 @@ class _ChatbotState extends State<Chatbot> {
               },
             ),
           ),
-          // Input field for user
+          // Row for controlling the voice input
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
-                Expanded(
-                  child: TextField(
-                    onChanged: (text) {
-                      setState(() {
-                        userInput = text;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      hintText: "Type a message",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                ),
                 IconButton(
-                  icon: Icon(Icons.send),
-                  onPressed: () {
-                    generateResponse();
-                  },
+                  icon: Icon(
+                    _isListening ? Icons.stop : Icons.mic,
+                    color: _isListening ? Colors.red : Colors.blue,
+                  ),
+                  onPressed: _isListening ? _stopListening : _startListening,
+                ),
+                // Display the recognized text
+                Expanded(
+                  child: Text(
+                    userInput,
+                    style: TextStyle(fontSize: 16),
+                  ),
                 ),
               ],
             ),
