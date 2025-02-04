@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dyslexiai/canvas/modeSelector.dart';
 import 'package:dyslexiai/chatbot/chatbot.dart';
+import 'package:dyslexiai/report/report.dart';
 import 'package:dyslexiai/susunkata/modeSelector.dart';
 import 'package:dyslexiai/training/trainingmain.dart';
 import 'package:flutter/material.dart';
@@ -399,7 +400,11 @@ class _HomePageState extends State<HomePage> {
             IconButton(
               icon: Icon(Icons.article, color: Colors.blue),
               onPressed: () {
-
+                // Navigate to report
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Report()),
+                );
               },
             ),
           ],
