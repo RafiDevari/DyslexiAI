@@ -150,7 +150,7 @@ class _ChatbotState extends State<Chatbot> {
                     child: Container(
                       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                       decoration: BoxDecoration(
-                        color: sender == "user" ? Color(0xFFF07167) : Color(0XFFFED9B7),
+                        color: sender == "user" ?Color(0XFFFED9B7) : Color(0xFFF07167) ,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
