@@ -313,63 +313,102 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
+
       ),
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.blue,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              IconButton(
-                icon: Icon(Icons.report),
-                color: Colors.white,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SpeechToTextPage()), // Add your report page navigation
-                  );
-                },
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 10, spreadRadius: 2)],
-                ),
-                child: IconButton(
-                  icon: Icon(Icons.home),
-                  color: Colors.blue,
-                  onPressed: () {
-                    // Placeholder for home button action
-                  },
-                ),
-              ),
-              IconButton(
-                icon: Icon(Icons.person),
-                color: Colors.white,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SpeechToTextPage()), // Add your profile page navigation
-                  );
-                },
-              ),
-            ],
-          ),
+      // bottomNavigationBar: BottomAppBar(
+      //   color: Colors.blue,
+      //   child: Padding(
+      //     padding: const EdgeInsets.symmetric(vertical: 10),
+      //     child: Row(
+      //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+      //       children: [
+      //         IconButton(
+      //           icon: Icon(Icons.report),
+      //           color: Colors.white,
+      //           onPressed: () {
+      //             Navigator.push(
+      //               context,
+      //               MaterialPageRoute(builder: (context) => SpeechToTextPage()), // Add your report page navigation
+      //             );
+      //           },
+      //         ),
+      //         Container(
+      //           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      //           decoration: BoxDecoration(
+      //             color: Colors.white,
+      //             shape: BoxShape.circle,
+      //             boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 10, spreadRadius: 2)],
+      //           ),
+      //           child: IconButton(
+      //             icon: Icon(Icons.home),
+      //             color: Colors.blue,
+      //             onPressed: () {
+      //               // Placeholder for home button action
+      //             },
+      //           ),
+      //         ),
+      //         IconButton(
+      //           icon: Icon(Icons.person),
+      //           color: Colors.white,
+      //           onPressed: () {
+      //             Navigator.push(
+      //               context,
+      //               MaterialPageRoute(builder: (context) => SpeechToTextPage()), // Add your profile page navigation
+      //             );
+      //           },
+      //         ),
+      //       ],
+      //     ),
+      //   ),
+      // ),
+
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
+      floatingActionButton: Container(
+        margin: EdgeInsets.only(bottom: 20),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5), // Keeps it compact
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(30), // Oval shape
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 10,
+              spreadRadius: 2,
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min, // Prevents it from taking full width
+          children: [
+            IconButton(
+              icon: Icon(Icons.home, color: Colors.blue),
+              onPressed: () {
+                // Navigate to home
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.chat, color: Colors.blue),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Chatbot()),
+                );
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.article, color: Colors.blue),
+              onPressed: () {
+
+              },
+            ),
+          ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => Chatbot()), // Replace with your chatbot page
-          );
-        },
-        child: Icon(Icons.chat),
-        backgroundColor: Colors.blue,
-      ),
+
+
+
     );
+
   }
 }
