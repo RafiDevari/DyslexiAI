@@ -80,6 +80,7 @@ class _SusunkatalobiState extends State<Susunkatalobi> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFFDFCDC), // Set background color here
       appBar: AppBar(
         title: Text('Susun Kata'),
       ),
@@ -87,13 +88,6 @@ class _SusunkatalobiState extends State<Susunkatalobi> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Total Kesalahan"),
-            SizedBox(height: 20),
-            Text(
-              misspelledData,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16),
-            ),
             SizedBox(height: 20),
             _buildImageButton(
               'assets/adventure.png',

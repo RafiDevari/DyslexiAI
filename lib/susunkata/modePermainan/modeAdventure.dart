@@ -15,6 +15,7 @@ class Susunkata extends StatefulWidget {
   State<Susunkata> createState() => _SusunState();
 }
 
+
 class _SusunState extends State<Susunkata> {
   String mispelledDetails = '';
   late String correctWord;
@@ -124,7 +125,7 @@ class _SusunState extends State<Susunkata> {
     } else {
       wrongAttempts++;
       lives--; // Deduct a heart
-
+      await speakWrongAnswer();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Wrong Word! Your answer: "$word"'),
         backgroundColor: Colors.red,
@@ -236,6 +237,15 @@ class _SusunState extends State<Susunkata> {
     await flutterTts.setSpeechRate(0.5);
     await flutterTts.speak(correctWord);
   }
+
+
+  Future<void> speakWrongAnswer() async {
+    await flutterTts.setLanguage("id-ID");
+    await flutterTts.setSpeechRate(0.5);
+    await flutterTts.speak("Kamu salah");
+  }
+
+
 
   @override
   Widget build(BuildContext context) {

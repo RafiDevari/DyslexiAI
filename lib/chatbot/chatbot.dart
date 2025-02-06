@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:flutter_tts/flutter_tts.dart';
 
 class Chatbot extends StatefulWidget {
   const Chatbot({super.key});
@@ -11,6 +12,24 @@ class Chatbot extends StatefulWidget {
 }
 
 class _ChatbotState extends State<Chatbot> {
+  FlutterTts _flutterTts = FlutterTts();
+
+  @override
+  void initState() {
+    super.initState();
+    _configureTTS();
+  }
+
+  void _configureTTS() async {
+    await _flutterTts.setLanguage("id-ID"); // Indonesian language
+    await _flutterTts.setPitch(1.0);
+    await _flutterTts.setSpeechRate(0.7);
+  }
+
+  Future<void> _speak(String text) async {
+    await _flutterTts.speak(text);
+  }
+
   List<Map<String, String>> messages = [];
   TextEditingController _textController = TextEditingController();
   String userInput = "";
@@ -39,8 +58,8 @@ class _ChatbotState extends State<Chatbot> {
             {
               "parts": [
                 {
-                  "text": "Kamu adalah Beemo, asisten AI yang ramah untuk anak-anak. "
-                      "Berbicaralah dengan santai, ceria, dan menarik!\n\n"
+                  "text": "Kamu adalah Beemo, asisten AI yang ramah untuk anak-anak 5 tahun. "
+                      "Berbicaralah dengan santai, ceria, dan menarik!Jawabannya jangan panjang dikarenakan inputmu akan dijadikan text to speech oleh ai lain, jadi gunakan tanda baca yang sesuai.jangan gunakan emot\n\n"
                       "Percakapan sejauh ini:\n"
                       "${_buildConversationHistory()}\n"
                       "Pengguna: $userInput"
@@ -58,7 +77,7 @@ class _ChatbotState extends State<Chatbot> {
         setState(() {
           messages.add({"sender": "beemo", "message": botResponse});
         });
-
+        _speak(botResponse);
         _scrollToBottom();
       } else {
         setState(() {
