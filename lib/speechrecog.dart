@@ -30,7 +30,7 @@ class _PronunciationCheckerPageState extends State<PronunciationCheckerPage> {
     setState(() {
       _targetWord = _wordList[DateTime.now().microsecondsSinceEpoch % _wordList.length];
       _feedback = "";
-      _highlightedText = [TextSpan(text: _targetWord, style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold))];
+      _highlightedText = [TextSpan(text: _targetWord, style: const TextStyle(color: Colors.grey, fontSize: 48, fontWeight: FontWeight.bold))];
     });
   }
 
