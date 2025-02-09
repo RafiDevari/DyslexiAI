@@ -107,6 +107,8 @@ class _SusunState extends State<modeEndless> {
         backgroundColor: Colors.green,
       ));
 
+      await GameData.updateExperience(5);
+
       Future.delayed(Duration(seconds: 2), () {
         Navigator.of(context).pop();
         resetGame(lives,score+1,mispelledDetails);

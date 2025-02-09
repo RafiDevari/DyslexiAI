@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dyslexiai/susunkata/levelSelector.dart';
 import 'package:dyslexiai/susunkata/modePermainan/modeEndless.dart';
-
 import '../data/user.dart';
 
 class Susunkatalobi extends StatefulWidget {
@@ -10,15 +9,14 @@ class Susunkatalobi extends StatefulWidget {
 }
 
 class _SusunkatalobiState extends State<Susunkatalobi> {
-  String misspelledData = "Loading...";  // Initial loading text
+  String misspelledData = "Loading..";
 
   @override
   void initState() {
     super.initState();
-    _loadMisspelledData();  // Automatically load data when the widget is created
+    _loadMisspelledData();
   }
 
-  // Function to load misspelled data and update the UI
   Future<void> _loadMisspelledData() async {
     Map<String, int> loadedMisspelled = await GameData.loadMisspelledLetters();
     setState(() {
@@ -28,9 +26,61 @@ class _SusunkatalobiState extends State<Susunkatalobi> {
     });
   }
 
+  Widget _buildImageButton(String imagePath, String title, String description, VoidCallback onPressed) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: InkWell(
+        onTap: onPressed,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+
+            Ink.image(
+              image: AssetImage(imagePath),
+              width: MediaQuery.of(context).size.width * (11 / 12),
+              height: 300,
+              fit: BoxFit.cover,
+              child: Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 20,
+              child: Column(
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    description,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFFDFCDC), // Set background color here
       appBar: AppBar(
         title: Text('Susun Kata'),
       ),
@@ -38,32 +88,24 @@ class _SusunkatalobiState extends State<Susunkatalobi> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Total Kesalahan"),
-
             SizedBox(height: 20),
-
-            Text(
-              misspelledData,  // Automatically display loaded data
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16),
-            ),
-
-            SizedBox(height: 20),
-
-            ElevatedButton(
-              onPressed: () {
+            _buildImageButton(
+              'assets/adventure.png',
+              'Adventure Mode',
+              'Explore levels and complete challenges',
+                  () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Susunkatalevelselector()),
+                  MaterialPageRoute(
+                      builder: (context) => Susunkatalevelselector()),
                 );
               },
-              child: Text('Adventure Mode'),
             ),
-
-            SizedBox(height: 20),
-
-            ElevatedButton(
-              onPressed: () {
+            _buildImageButton(
+              'assets/endless.png',
+              'Endless Mode',
+              'Survive as long as possible',
+                  () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -71,7 +113,6 @@ class _SusunkatalobiState extends State<Susunkatalobi> {
                   ),
                 );
               },
-              child: Text('Endless Mode'),
             ),
           ],
         ),
