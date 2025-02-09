@@ -7,12 +7,17 @@ import 'package:dyslexiai/susunkata/modeSelector.dart';
 import 'package:dyslexiai/training/trainingmain.dart';
 import 'package:flutter/material.dart';
 import 'package:dyslexiai/speechrecog.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'data/user.dart';  // Add your ProfilePage import here
 
-void main() {
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Ensures Flutter framework is ready
+  await dotenv.load(fileName: ".env"); // ✅ Load .env before running the app
   runApp(MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   @override
