@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 
 class Susunkatalevelselector extends StatelessWidget {
   final List<Map<String, String>> categories = [
-    {"title": "Hewan Darat  (Swipe ke kanan )", "type": "Darat"},
-    {"title": "Hewan Laut", "type": "Laut"},
-    {"title": "Hewan Udara", "type": "Udara"},
+    {"title": "Hewan Darat  (Swipe ke kanan )", "type": "Darat", "image": "assets/darat.jpg"},
+    {"title": "Hewan Laut", "type": "Laut", "image": "assets/laut.jpg"},
+    {"title": "Hewan Udara", "type": "Udara", "image": "assets/udara.jpg"},
   ];
 
   @override
@@ -14,6 +14,7 @@ class Susunkatalevelselector extends StatelessWidget {
       appBar: AppBar(
         title: Text('Mode Petualangan'),
       ),
+      backgroundColor: Color(0xFFFDFCDC),
       body: Center(
         child: Container(
           height: 200,
@@ -38,10 +39,24 @@ class Susunkatalevelselector extends StatelessWidget {
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.8,
                     alignment: Alignment.center,
-                    child: Text(
-                      categories[index]["title"]!,
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      image: DecorationImage(
+                        image: AssetImage(categories[index]["image"]!),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    child: Container(
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.5),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Text(
+                        categories[index]["title"]!,
+                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ),
                 ),

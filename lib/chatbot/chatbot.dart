@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Chatbot extends StatefulWidget {
   const Chatbot({super.key});
@@ -33,7 +34,7 @@ class _ChatbotState extends State<Chatbot> {
   List<Map<String, String>> messages = [];
   TextEditingController _textController = TextEditingController();
   String userInput = "";
-  final String apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key="; // Replace with your actual API key
+  final String apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${dotenv.env['GEMINI_API_KEY']}";
 
   ScrollController _scrollController = ScrollController();
   stt.SpeechToText _speech = stt.SpeechToText();

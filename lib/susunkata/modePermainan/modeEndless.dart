@@ -62,7 +62,7 @@ class _SusunState extends State<modeEndless> {
       generatedLetters.add(randomLetter);
     }
 
-    generatedLetters.shuffle(); // Shuffle the letters
+    generatedLetters.shuffle();
     return generatedLetters;
   }
 
